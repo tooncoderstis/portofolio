@@ -33,6 +33,7 @@ vi.mock("./db", () => ({ upsertSnapshot }));
 vi.mock("./adapters/github", () => ({ getGithubStats }));
 
 import {
+  cacheKey,
   getStats,
   StatsNotConfiguredError,
   StatsNotImplementedError,
@@ -60,13 +61,13 @@ describe("getStats", () => {
       fetchedAt: "2026-09-27T00:00:00.000Z",
     });
     expect(result.data).toEqual({ total: 17 });
-    expect(store.cache.get("github")).toBeDefined();
-    expect(store.stale.get("github")).toBeDefined();
+    expect(store.cache.get(cacheKey("github"))).toBeDefined();
+    expect(store.stale.get(cacheKey("github"))).toBeDefined();
     expect(upsertSnapshot).toHaveBeenCalledOnce();
   });
 
   it("mengembalikan cache tanpa memanggil adapter saat cache hangat", async () => {
-    store.cache.set("github", {
+    store.cache.set(cacheKey("github"), {
       data: { total: 5 },
       fetchedAt: "2026-09-26T00:00:00.000Z",
     });
@@ -80,7 +81,7 @@ describe("getStats", () => {
   });
 
   it("fallback ke snapshot stale saat upstream gagal", async () => {
-    store.stale.set("github", {
+    store.stale.set(cacheKey("github"), {
       data: { total: 4 },
       fetchedAt: "2026-09-20T00:00:00.000Z",
     });

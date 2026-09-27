@@ -10,7 +10,7 @@
 
 ## TL;DR (konteks 30 detik)
 
-Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **FASE 1: 1.1–1.3 selesai (route `/api/stats/[source]` terverifikasi live dengan cache Redis + snapshot Postgres); berikutnya 1.4 (UI widget dashboard) atau adapter WakaTime/MonkeyType.**
+Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **FASE 1: 1.1–1.4 selesai (dashboard UI tampil dengan data GitHub asli, tema gelap/terang, animasi); berikutnya adapter WakaTime/MonkeyType untuk mengisi widget sisanya, lalu 1.5 halaman konten.**
 
 > ⚠️ **Catatan keamanan**: `.env` sementara memakai token GitHub/WakaTime lama yang pernah terekspos di disk. **Rotasi token** sebelum push/deploy.
 
@@ -31,29 +31,30 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | --- | -------------------------------------------------------------- | ---------------------- |
 | 1.1 | Fondasi data (env/http/cache/db + `docker-compose.yml`)        | ✅                     |
 | 1.2 | Adapter GitHub end-to-end (GraphQL + REST)                     | ✅                     |
-| 1.3 | API route `GET /api/stats/[source]` (cache + stale + snapshot) | ✅ (menunggu evaluasi) |
-| 1.4 | UI shell + widget dashboard                                    | ⬜                     |
+| 1.3 | API route `GET /api/stats/[source]` (cache + stale + snapshot) | ✅                     |
+| 1.4 | UI shell + widget dashboard                                    | ✅ (menunggu evaluasi) |
 | 1.5 | Halaman konten (MDX: `/about`, `/projects`)                    | ⬜                     |
 | 1.6 | Snapshot harian + grafik tren                                  | ⬜                     |
 
-Adapter lain: WakaTime ⬜ · MonkeyType ⬜ · Umami ⬜ (kredensial belum ada).
+Adapter lain: WakaTime ⬜ · MonkeyType ⬜ · Umami ⬜ (kredensial Umami belum ada).
 
 ## Kondisi saat ini
 
-- `lib/stats.ts`: service agregasi — cache Redis (TTL 1 jam) → fetch adapter → simpan cache + snapshot stale (7 hari) + upsert Postgres; saat upstream gagal → **fallback snapshot stale** (`meta.stale=true`).
-- `app/api/stats/[source]/route.ts`: `github`→200, tak dikenal→404, belum diimplementasi→501, belum dikonfigurasi→503, upstream gagal→502.
-- Verifikasi **live** (server produksi lokal): call #1 `cached:false` (fetch segar), call #2 `cached:true` (dari Redis); `wakatime`→501; `foo`→404; baris `snapshot` (source=github) masuk Postgres.
-- `npm run typecheck`, `npm run lint`, `npm test` (Vitest, **31 test**), `npm run build` semuanya **lolos**.
+- **UI**: shadcn/ui (`card`, `badge`, `skeleton`, `button`, `separator`), `next-themes` (tombol gelap/terang), `framer-motion` (`Reveal`), ikon `lucide-react`.
+- **Home** (`app/page.tsx`): hero + grid dashboard. Widget GitHub merender data asli (tile statistik, heatmap kontribusi, top bahasa) via `loadStats()` + `Suspense` (fallback skeleton). WakaTime/Umami/MonkeyType menampilkan placeholder "Segera hadir".
+- **Cache versioned**: `cacheKey()` = `<source>:v1` (`CACHE_VERSION`) agar perubahan skema tidak menyajikan bentuk cache lama.
+- Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **41 test** · `build` ✅ · HTML `/` memuat widget GitHub + heatmap + placeholder.
 - `docker-compose.yml` (Postgres 16 + Redis 7) sehat.
 
 ## Yang belum selesai / menunggu
 
 | Item                              | Catatan                                                            |
 | --------------------------------- | ------------------------------------------------------------------ |
-| Evaluasi manual sub-tahap 1.3     | `npm run dev` → buka `/api/stats/github` (dua kali)                |
-| Adapter WakaTime / MonkeyType     | Sub-tahap 1.2 lanjutan                                             |
+| Evaluasi manual sub-tahap 1.4     | `npm run dev` → lihat dashboard & toggle tema                      |
+| Adapter WakaTime / MonkeyType     | Isi 3 widget yang masih placeholder                                |
 | Adapter Umami                     | Menunggu kredensial Umami                                          |
-| UI dashboard (1.4) & konten (1.5) | Belum dimulai                                                      |
+| Halaman konten (1.5)              | `/about`, `/projects` (MDX)                                        |
+| Snapshot harian + tren (1.6)      | Job terjadwal + grafik                                             |
 | Rotasi token (GitHub & WakaTime)  | Token lama pernah terekspos di disk                                |
 | Deploy nyata ke EasyPanel         | Butuh registry + env produksi dari pemilik                         |
 | Push ke GitHub                    | Menunggu perintah pemilik; `gh` belum dijalankan                   |
@@ -65,7 +66,6 @@ Adapter lain: WakaTime ⬜ · MonkeyType ⬜ · Umami ⬜ (kredensial belum ada)
 npm install
 docker compose up -d                 # Postgres + Redis lokal
 npm run dev                          # http://localhost:3000
-# GET /api/stats/github  (dipanggil 2x: pertama fresh, kedua cached:true)
 npm run stats:check                  # verifikasi live adapter GitHub (butuh .env)
 npm run lint
 npm run typecheck

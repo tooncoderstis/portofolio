@@ -18,6 +18,12 @@ export function isStatsSource(value: string): value is StatsSource {
   return (STATS_SOURCES as readonly string[]).includes(value);
 }
 
+export const CACHE_VERSION = "v1";
+
+export function cacheKey(source: StatsSource): string {
+  return `${source}:${CACHE_VERSION}`;
+}
+
 export class StatsNotConfiguredError extends Error {
   constructor(source: StatsSource) {
     super(`Sumber '${source}' belum dikonfigurasi.`);
@@ -90,7 +96,8 @@ export async function getStats(
   source: StatsSource,
   now: Date = new Date(),
 ): Promise<StatsResponse> {
-  const cached = await getCached<CacheEntry>(source);
+  const key = cacheKey(source);
+  const cached = await getCached<CacheEntry>(key);
 
   if (cached) {
     return {
@@ -104,8 +111,8 @@ export async function getStats(
     const data = await fetchSource(source);
     const entry: CacheEntry = { data, fetchedAt: now.toISOString() };
 
-    await setCached(source, entry);
-    await setStale(source, entry);
+    await setCached(key, entry);
+    await setStale(key, entry);
     await saveSnapshot(source, data, now);
 
     return {
@@ -121,7 +128,7 @@ export async function getStats(
       throw error;
     }
 
-    const stale = await getStale<CacheEntry>(source);
+    const stale = await getStale<CacheEntry>(key);
 
     if (stale) {
       return {

@@ -104,6 +104,8 @@ describe("normalizeGithub", () => {
     expect(stats.profile.followers).toBe(12);
     expect(stats.contributions.total).toBe(5);
     expect(stats.calendar).toHaveLength(5);
+    expect(stats.calendarWeeks).toHaveLength(1);
+    expect(stats.calendarWeeks[0]).toHaveLength(5);
     expect(stats.calendar[1]).toEqual({
       date: "2026-09-21",
       count: 2,

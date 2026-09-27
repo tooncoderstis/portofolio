@@ -85,6 +85,7 @@ export type GithubStats = {
   contributions: { total: number };
   streak: { current: number; longest: number };
   calendar: GithubCalendarDay[];
+  calendarWeeks: GithubCalendarDay[][];
   topLanguages: GithubLanguage[];
 };
 
@@ -206,13 +207,15 @@ export function normalizeGithub(
   const repos = reposSchema.parse(reposRaw);
   const weeks = user.contributionsCollection.contributionCalendar.weeks;
 
-  const calendar: GithubCalendarDay[] = weeks.flatMap((week) =>
+  const calendarWeeks: GithubCalendarDay[][] = weeks.map((week) =>
     week.contributionDays.map((day) => ({
       date: day.date,
       count: day.contributionCount,
       level: levelMap[day.contributionLevel],
     })),
   );
+
+  const calendar: GithubCalendarDay[] = calendarWeeks.flat();
 
   const streak = computeStreaks(
     calendar.map((day) => ({ date: day.date, count: day.count })),
@@ -236,6 +239,7 @@ export function normalizeGithub(
     },
     streak,
     calendar,
+    calendarWeeks,
     topLanguages: topLanguages(repos),
   };
 }
