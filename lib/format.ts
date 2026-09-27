@@ -6,6 +6,17 @@ export function formatPercent(value: number): string {
   return `${value}%`;
 }
 
+export function formatDuration(totalSeconds: number): string {
+  const seconds = Math.max(0, Math.round(totalSeconds));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  if (hours > 0) return `${hours}j ${minutes}m`;
+  if (minutes > 0) return `${minutes}m`;
+
+  return `${seconds}s`;
+}
+
 export function formatRelativeTime(
   iso: string,
   now: Date = new Date(),

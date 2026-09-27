@@ -2,6 +2,8 @@ import { Suspense } from "react";
 
 import { ComingSoonWidget } from "@/components/dashboard/coming-soon-widget";
 import { GithubWidget } from "@/components/dashboard/github-widget";
+import { MonkeytypeWidget } from "@/components/dashboard/monkeytype-widget";
+import { WakatimeWidget } from "@/components/dashboard/wakatime-widget";
 import { WidgetSkeleton } from "@/components/dashboard/widget-skeleton";
 import { Reveal } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
@@ -57,27 +59,23 @@ export default function Home() {
             </Reveal>
           </Suspense>
 
-          <Reveal delay={0.05}>
-            <ComingSoonWidget
-              title="WakaTime"
-              description="Jam coding, bahasa, dan editor"
-              source="wakatime"
-            />
-          </Reveal>
+          <Suspense fallback={<WidgetSkeleton />}>
+            <Reveal delay={0.05}>
+              <WakatimeWidget />
+            </Reveal>
+          </Suspense>
 
-          <Reveal delay={0.1}>
+          <Suspense fallback={<WidgetSkeleton />}>
+            <Reveal delay={0.1}>
+              <MonkeytypeWidget />
+            </Reveal>
+          </Suspense>
+
+          <Reveal delay={0.15}>
             <ComingSoonWidget
               title="Umami Analytics"
               description="Page views dan pengunjung unik"
               source="umami"
-            />
-          </Reveal>
-
-          <Reveal delay={0.15}>
-            <ComingSoonWidget
-              title="MonkeyType"
-              description="Kecepatan mengetik terbaik"
-              source="monkeytype"
             />
           </Reveal>
         </div>

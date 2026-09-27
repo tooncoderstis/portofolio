@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { formatNumber, formatPercent, formatRelativeTime } from "./format";
+import {
+  formatDuration,
+  formatNumber,
+  formatPercent,
+  formatRelativeTime,
+} from "./format";
 
 describe("formatNumber", () => {
   it("memformat dengan pemisah ribuan gaya Indonesia", () => {
@@ -12,6 +17,15 @@ describe("formatNumber", () => {
 describe("formatPercent", () => {
   it("menambahkan tanda persen", () => {
     expect(formatPercent(66.7)).toBe("66.7%");
+  });
+});
+
+describe("formatDuration", () => {
+  it("memformat jam, menit, dan detik", () => {
+    expect(formatDuration(45000)).toBe("12j 30m");
+    expect(formatDuration(300)).toBe("5m");
+    expect(formatDuration(45)).toBe("45s");
+    expect(formatDuration(0)).toBe("0s");
   });
 });
 

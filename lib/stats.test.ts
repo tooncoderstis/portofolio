@@ -4,6 +4,9 @@ const envMock = vi.hoisted(() => ({
   env: {
     GITHUB_TOKEN: "tok" as string | undefined,
     GITHUB_USERNAME: "user" as string | undefined,
+    WAKATIME_API_KEY: "waka" as string | undefined,
+    MONKEYTYPE_USERNAME: "user" as string | undefined,
+    MONKEYTYPE_API_KEY: undefined as string | undefined,
   },
 }));
 
@@ -31,6 +34,10 @@ vi.mock("./cache", () => ({
 vi.mock("./db", () => ({ upsertSnapshot }));
 
 vi.mock("./adapters/github", () => ({ getGithubStats }));
+
+vi.mock("./adapters/wakatime", () => ({ getWakatimeStats: vi.fn() }));
+
+vi.mock("./adapters/monkeytype", () => ({ getMonkeytypeStats: vi.fn() }));
 
 import {
   cacheKey,
@@ -101,7 +108,7 @@ describe("getStats", () => {
   });
 
   it("melempar StatsNotImplementedError untuk sumber yang belum ada", async () => {
-    await expect(getStats("wakatime")).rejects.toBeInstanceOf(
+    await expect(getStats("umami")).rejects.toBeInstanceOf(
       StatsNotImplementedError,
     );
   });

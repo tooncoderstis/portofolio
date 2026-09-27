@@ -1,42 +1,71 @@
 import "dotenv/config";
 
 import { getGithubStats } from "../lib/adapters/github";
+import { getMonkeytypeStats } from "../lib/adapters/monkeytype";
+import { getWakatimeStats } from "../lib/adapters/wakatime";
 
 async function main(): Promise<void> {
-  const token = process.env.GITHUB_TOKEN;
-  const username = process.env.GITHUB_USERNAME;
+  const results: Record<string, unknown> = {};
 
-  if (!token || !username) {
+  if (process.env.GITHUB_TOKEN && process.env.GITHUB_USERNAME) {
+    const github = await getGithubStats({
+      token: process.env.GITHUB_TOKEN,
+      username: process.env.GITHUB_USERNAME,
+    });
+
+    results.github = {
+      username: github.username,
+      totalContributions: github.contributions.total,
+      currentStreak: github.streak.current,
+      longestStreak: github.streak.longest,
+      calendarDays: github.calendar.length,
+      topLanguages: github.topLanguages.slice(0, 3),
+    };
+  }
+
+  if (process.env.WAKATIME_API_KEY) {
+    const wakatime = await getWakatimeStats({
+      apiKey: process.env.WAKATIME_API_KEY,
+    });
+
+    results.wakatime = {
+      username: wakatime.username,
+      totalSeconds: wakatime.totalSeconds,
+      totalText: wakatime.totalText,
+      dailyAverageText: wakatime.dailyAverageText,
+      languages: wakatime.languages.slice(0, 3).map((entry) => entry.name),
+      last7DaysSeconds: wakatime.last7Days.map((day) => day.seconds),
+    };
+  }
+
+  if (process.env.MONKEYTYPE_USERNAME) {
+    const monkeytype = await getMonkeytypeStats({
+      username: process.env.MONKEYTYPE_USERNAME,
+      apiKey: process.env.MONKEYTYPE_API_KEY,
+    });
+
+    results.monkeytype = {
+      name: monkeytype.name,
+      bestWpm: monkeytype.bestWpm,
+      bestAccuracy: monkeytype.bestAccuracy,
+      completedTests: monkeytype.completedTests,
+      maxStreak: monkeytype.maxStreak,
+      bestsByDuration: monkeytype.bestsByDuration,
+    };
+  }
+
+  if (Object.keys(results).length === 0) {
     console.error(
-      "GITHUB_TOKEN / GITHUB_USERNAME belum diisi di .env (lihat docs/runbooks/credentials.md).",
+      "Tidak ada kredensial di .env. Lihat docs/runbooks/credentials.md.",
     );
     process.exitCode = 1;
     return;
   }
 
-  const stats = await getGithubStats({ token, username });
-
-  console.log(
-    JSON.stringify(
-      {
-        username: stats.username,
-        name: stats.profile.name,
-        publicRepos: stats.profile.publicRepos,
-        followers: stats.profile.followers,
-        totalContributions: stats.contributions.total,
-        currentStreak: stats.streak.current,
-        longestStreak: stats.streak.longest,
-        calendarDays: stats.calendar.length,
-        topLanguages: stats.topLanguages.slice(0, 5),
-        fetchedAt: stats.fetchedAt,
-      },
-      null,
-      2,
-    ),
-  );
+  console.log(JSON.stringify(results, null, 2));
 }
 
 main().catch((error: unknown) => {
-  console.error("Gagal mengambil statistik GitHub:", error);
+  console.error("Gagal mengambil statistik:", error);
   process.exitCode = 1;
 });

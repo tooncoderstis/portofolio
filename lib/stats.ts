@@ -1,6 +1,8 @@
 import "server-only";
 
 import { getGithubStats } from "./adapters/github";
+import { getMonkeytypeStats } from "./adapters/monkeytype";
+import { getWakatimeStats } from "./adapters/wakatime";
 import { getCached, getStale, setCached, setStale } from "./cache";
 import { upsertSnapshot } from "./db";
 import { env } from "./env";
@@ -69,9 +71,26 @@ async function fetchSource(source: StatsSource): Promise<unknown> {
       });
     }
 
-    case "wakatime":
+    case "wakatime": {
+      if (!env.WAKATIME_API_KEY) {
+        throw new StatsNotConfiguredError(source);
+      }
+
+      return getWakatimeStats({ apiKey: env.WAKATIME_API_KEY });
+    }
+
+    case "monkeytype": {
+      if (!env.MONKEYTYPE_USERNAME) {
+        throw new StatsNotConfiguredError(source);
+      }
+
+      return getMonkeytypeStats({
+        username: env.MONKEYTYPE_USERNAME,
+        apiKey: env.MONKEYTYPE_API_KEY,
+      });
+    }
+
     case "umami":
-    case "monkeytype":
       throw new StatsNotImplementedError(source);
   }
 }

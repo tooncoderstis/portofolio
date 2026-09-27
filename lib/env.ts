@@ -25,6 +25,7 @@ const envSchema = z.object({
   GITHUB_USERNAME: optionalString,
   WAKATIME_API_KEY: optionalString,
   MONKEYTYPE_USERNAME: optionalString,
+  MONKEYTYPE_API_KEY: optionalString,
   UMAMI_API_URL: optionalUrl,
   UMAMI_API_KEY: optionalString,
   UMAMI_WEBSITE_ID: optionalString,

@@ -33,7 +33,7 @@ Catatan: contribution calendar diambil via **GraphQL `contributionsCollection`**
 
 1. Daftar/login di **monkeytype.com**, lakukan beberapa sesi tes agar ada data.
 2. Set `MONKEYTYPE_USERNAME` **di `.env`** = username MonkeyType-mu.
-3. Catatan: sebagian endpoint MonkeyType memerlukan header **ApeKey**; bila perlu, buat dari akun lalu tambahkan variabelnya saat mengerjakan adapter.
+3. Endpoint profil (`/users/{username}/profile`) dapat diakses **tanpa API key**. Bila suatu endpoint menolak, buat **ApeKey** dari pengaturan akun lalu isi `MONKEYTYPE_API_KEY` (opsional).
 
 ## 4. Umami (pilih salah satu)
 
