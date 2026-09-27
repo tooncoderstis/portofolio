@@ -16,11 +16,21 @@
 2. **EasyPanel**: Project → Create Service → App → **Source: Docker Image** → isi `<registry>/portofolio:<versi>`
    (kredensial registry bila image privat).
 3. **Port**: container `3000` → map ke domain. Aktifkan **HTTPS (Let's Encrypt)**.
-4. **Environment**: isi variabel dari `.env.production.example` (`GITHUB_TOKEN`, `WAKATIME_API_KEY`, `UMAMI_*`, `MONKEYTYPE_USERNAME`, `DATABASE_URL`, `REDIS_URL`, `SITE_URL`).
+4. **Environment**: isi variabel dari `.env.production.example` (`GITHUB_TOKEN`, `WAKATIME_API_KEY`, `UMAMI_*`, `MONKEYTYPE_USERNAME`, `DATABASE_URL`, `REDIS_URL`, `SITE_URL`, `SNAPSHOT_SECRET`).
 5. **Deploy** → cek log container (Next.js start pada port 3000).
-6. **Pasca-deploy**: jalankan migrasi/skema snapshot bila ada; aktifkan scheduled task snapshot harian.
-7. **Verifikasi**: `GET /api/health` → `200` `{status,version,time}`; beranda memuat; widget dashboard terisi; HTTPS aktif.
+6. **Pasca-deploy**: buat tabel snapshot otomatis saat job pertama berjalan; aktifkan **scheduled task** snapshot harian (lihat bagian di bawah).
+7. **Verifikasi**: `GET /api/health` → `200` `{status,version,time}`; beranda memuat; widget dashboard terisi; `GET /api/trends/github?days=30` mengembalikan poin; HTTPS aktif.
 8. **Rollback**: ubah tag image ke versi sebelumnya → Deploy.
+
+## Snapshot harian (job terjadwal)
+
+Endpoint: `POST /api/snapshot` (atau `GET`) dengan header `x-snapshot-secret: <SNAPSHOT_SECRET>`.
+
+- **EasyPanel**: Schedule → perintah
+  `curl -fsS -X POST -H "x-snapshot-secret: <SNAPSHOT_SECRET>" https://<domain>/api/snapshot`
+  Jadwalkan sekali sehari (mis. `0 1 * * *`).
+- **Lokal** (dev, tanpa secret): `curl -X POST http://localhost:3000/api/snapshot`.
+- Endpoint menulis satu baris per sumber per hari (upsert `(source, captured_on)`) lalu dipakai `GET /api/trends/[source]`.
 
 ## Keamanan & operasional
 

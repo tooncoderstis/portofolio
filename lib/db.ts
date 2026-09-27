@@ -68,8 +68,11 @@ export async function getSnapshots(
 
   await client.query(CREATE_TABLE_SQL);
 
-  const { rows } = await client.query<{ captured_on: Date; payload: unknown }>(
-    `SELECT captured_on, payload
+  const { rows } = await client.query<{
+    captured_on: string;
+    payload: unknown;
+  }>(
+    `SELECT to_char(captured_on, 'YYYY-MM-DD') AS captured_on, payload
        FROM snapshot
       WHERE source = $1
         AND captured_on >= (CURRENT_DATE - ($2::int - 1))
@@ -78,7 +81,7 @@ export async function getSnapshots(
   );
 
   return rows.map((row) => ({
-    capturedOn: row.captured_on.toISOString().slice(0, 10),
+    capturedOn: row.captured_on,
     payload: row.payload,
   }));
 }

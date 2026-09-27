@@ -40,7 +40,7 @@ export class StatsNotImplementedError extends Error {
   }
 }
 
-type CacheEntry = {
+export type CacheEntry = {
   data: unknown;
   fetchedAt: string;
 };
@@ -111,6 +111,25 @@ async function saveSnapshot(
   }
 }
 
+export async function refreshStats(
+  source: StatsSource,
+  now: Date = new Date(),
+): Promise<StatsResponse> {
+  const data = await fetchSource(source);
+  const key = cacheKey(source);
+  const entry: CacheEntry = { data, fetchedAt: now.toISOString() };
+
+  await setCached(key, entry);
+  await setStale(key, entry);
+  await saveSnapshot(source, data, now);
+
+  return {
+    source,
+    data,
+    meta: { source, stale: false, cached: false, fetchedAt: entry.fetchedAt },
+  };
+}
+
 export async function getStats(
   source: StatsSource,
   now: Date = new Date(),
@@ -127,18 +146,7 @@ export async function getStats(
   }
 
   try {
-    const data = await fetchSource(source);
-    const entry: CacheEntry = { data, fetchedAt: now.toISOString() };
-
-    await setCached(key, entry);
-    await setStale(key, entry);
-    await saveSnapshot(source, data, now);
-
-    return {
-      source,
-      data,
-      meta: { source, stale: false, cached: false, fetchedAt: entry.fetchedAt },
-    };
+    return await refreshStats(source, now);
   } catch (error) {
     if (
       error instanceof StatsNotConfiguredError ||

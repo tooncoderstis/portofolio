@@ -31,6 +31,7 @@ const envSchema = z.object({
   UMAMI_WEBSITE_ID: optionalString,
   DATABASE_URL: optionalString,
   REDIS_URL: optionalString,
+  SNAPSHOT_SECRET: optionalString,
 });
 
 export type Env = z.infer<typeof envSchema>;
