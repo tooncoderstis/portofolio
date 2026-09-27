@@ -1,5 +1,3 @@
-import "server-only";
-
 export class HttpError extends Error {
   readonly status: number;
   readonly url: string;

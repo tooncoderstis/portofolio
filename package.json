@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "stats:check": "tsx scripts/check-stats.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -31,11 +32,13 @@
     "@types/pg": "^8.23.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "dotenv": "^18.0.4",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.5.0",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^4.0.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.7.2",
     "vitest": "^3.0.0"
   }

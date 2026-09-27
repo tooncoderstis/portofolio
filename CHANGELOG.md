@@ -20,3 +20,4 @@ Status terkini: [`STATUS.md`](STATUS.md).
 - Deploy EasyPanel: `deploy/easypanel-docker/Dockerfile` (Next.js multi-stage standalone, user non-root), `build-push.ps1`, `RUNBOOK.md`, dan `.dockerignore`.
 - Runbook kredensial: `docs/runbooks/credentials.md` (panduan GitHub, WakaTime, MonkeyType, Umami).
 - FASE 1.1 — fondasi data: `lib/env.ts` (validasi env Zod), `lib/http.ts` (fetch + timeout/retry), `lib/cache.ts` (Redis dengan fallback in-memory + snapshot stale), `lib/db.ts` (Postgres snapshot upsert/query), `docker-compose.yml` (Postgres 16 + Redis 7 lokal), dan 14 test baru.
+- FASE 1.2 — adapter GitHub: `lib/adapters/github.ts` (GraphQL contributions + kalender + streak, REST top bahasa, skema Zod), script `npm run stats:check`, `dotenv` + `tsx` (dev), dan 5 test baru.
