@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+.github
+.vscode
+.idea
+coverage
+tmp
+*.log
+.env
+.env.*
+!.env.example
+!.env.production.example
+Dockerfile
+deploy
+docs

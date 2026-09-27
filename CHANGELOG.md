@@ -17,3 +17,4 @@ Status terkini: [`STATUS.md`](STATUS.md).
 - `.env.example` & `.env.production.example` (placeholder, tanpa rahasia).
 - Kerangka Next.js: App Router + TypeScript + Tailwind CSS 4, `output: standalone`, ESLint (flat config), Prettier (+ plugin Tailwind), Vitest.
 - Endpoint `GET /api/health` + test; foundation shadcn/ui (`components.json`, `lib/utils.ts`, token tema di `app/globals.css`).
+- Deploy EasyPanel: `deploy/easypanel-docker/Dockerfile` (Next.js multi-stage standalone, user non-root), `build-push.ps1`, `RUNBOOK.md`, dan `.dockerignore`.
