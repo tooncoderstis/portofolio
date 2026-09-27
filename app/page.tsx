@@ -11,11 +11,13 @@ import { Reveal } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getProfile } from "@/lib/content";
+import { socialLinks } from "@/lib/socials";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const { frontmatter: profile } = await getProfile();
+  const socials = socialLinks(profile.socials);
 
   return (
     <main className="mx-auto w-full max-w-5xl px-6 py-16">
@@ -35,18 +37,21 @@ export default async function Home() {
         </Reveal>
         <Reveal delay={0.15}>
           <div className="flex flex-wrap gap-3">
-            {profile.socials.github ? (
-              <Button asChild>
-                <a
-                  href={profile.socials.github}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub
+            {socials.map((social, index) => (
+              <Button
+                key={social.key}
+                variant={index === 0 ? "default" : "outline"}
+                asChild
+              >
+                <a href={social.href} target="_blank" rel="noreferrer">
+                  {social.label}
                 </a>
               </Button>
-            ) : null}
-            <Button variant="outline" asChild>
+            ))}
+            <Button
+              variant={socials.length > 0 ? "outline" : "default"}
+              asChild
+            >
               <Link href="/projects">Lihat proyek</Link>
             </Button>
             <Button variant="ghost" asChild>

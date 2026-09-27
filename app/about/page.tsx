@@ -3,19 +3,14 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 
 import { mdxComponents } from "@/components/mdx/mdx-components";
 import { getProfile } from "@/lib/content";
+import { socialLinks } from "@/lib/socials";
 
 export const metadata: Metadata = { title: "Tentang" };
 
 export default async function AboutPage() {
   const { frontmatter: profile, content } = await getProfile();
 
-  const socials = Object.entries(profile.socials)
-    .filter((entry): entry is [string, string] => Boolean(entry[1]))
-    .map(([key, value]) => ({
-      key,
-      label: key === "email" ? "Email" : key,
-      href: key === "email" ? `mailto:${value}` : value,
-    }));
+  const socials = socialLinks(profile.socials);
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-14 px-6 py-16">
