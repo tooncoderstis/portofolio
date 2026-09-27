@@ -19,7 +19,7 @@ Panduan mengumpulkan kredensial untuk dashboard live. **Jangan pernah menaruh ni
 2. Nama: `portofolio-local`; Expiration: 90 hari (perpanjang berkala).
 3. Centang scope **`read:user`** (wajib untuk contribution calendar). Opsional `public_repo` bila ingin statistik repo.
 4. **Generate** → salin token `ghp_...` (hanya tampil sekali).
-5. Set `GITHUB_TOKEN` = token, `GITHUB_USERNAME` = username GitHub.
+5. Salin token ke variabel `GITHUB_TOKEN` **di `.env`** (jangan tulis nilainya di dokumen ini), dan `GITHUB_USERNAME` = username GitHub-mu.
 
 Catatan: contribution calendar diambil via **GraphQL `contributionsCollection`**; token classic dengan `read:user` paling sederhana dan pasti didukung.
 
@@ -27,12 +27,12 @@ Catatan: contribution calendar diambil via **GraphQL `contributionsCollection`**
 
 1. Daftar/login di **wakatime.com**.
 2. Pasang plugin editor (VS Code, dll.) dan ngoding sebentar agar ada data (akun baru statistiknya nol).
-3. **Settings → API Key** → salin **Secret API Key** ke `WAKATIME_API_KEY`.
+3. **Settings → API Key** → salin **Secret API Key** ke variabel `WAKATIME_API_KEY` **di `.env`**.
 
 ## 3. MonkeyType
 
 1. Daftar/login di **monkeytype.com**, lakukan beberapa sesi tes agar ada data.
-2. Set `MONKEYTYPE_USERNAME` = username MonkeyType.
+2. Set `MONKEYTYPE_USERNAME` **di `.env`** = username MonkeyType-mu.
 3. Catatan: sebagian endpoint MonkeyType memerlukan header **ApeKey**; bila perlu, buat dari akun lalu tambahkan variabelnya saat mengerjakan adapter.
 
 ## 4. Umami (pilih salah satu)
