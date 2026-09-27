@@ -14,7 +14,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 
 > ⚠️ **Catatan keamanan**: `.env` sementara memakai token GitHub/WakaTime lama yang pernah terekspos di disk. **Rotasi token** sebelum push/deploy.
 >
-> ✏️ **Konten contoh perlu diedit**: `content/profile.mdx` (nama/kompetensi), `content/projects/*.mdx` (judul, ringkasan, `liveUrl` masih `https://example.com`).
+> 📝 **Konten**: profil (`Tooncoder`, BPS Kabupaten Bengkulu Tengah) dan proyek (SigmaLab, Klinix, Portofolio) sudah diisi dari data pemilik. Proyek "Portofolio" (situs ini) dipertahankan — boleh dihapus bila ingin. "Laravel" ada di kategori Frontend sesuai input; bisa dipindah ke Backend.
 
 ## Checklist Scaffold
 
@@ -53,7 +53,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | Item                              | Catatan                                                            |
 | --------------------------------- | ------------------------------------------------------------------ |
 | Evaluasi manual sub-tahap 1.6     | `POST /api/snapshot`, cek `/api/trends/github` & beranda           |
-| Edit konten contoh                | Nama, kompetensi, pengalaman, proyek, `liveUrl` nyata              |
+| Review kategori kompetensi        | "Laravel" saat ini di Frontend; boleh dipindah ke Backend          |
 | Adapter Umami                     | Menunggu kredensial Umami                                          |
 | Rotasi token (GitHub & WakaTime)  | Token lama pernah terekspos di disk                                |
 | Deploy nyata ke EasyPanel         | Butuh registry + env produksi dari pemilik                         |

@@ -2,7 +2,7 @@
 title: "Portofolio & Dashboard Live"
 slug: "portofolio"
 status: "in-progress"
-summary: "Portofolio pribadi dengan dashboard live yang mengagregasi GitHub, WakaTime, Umami, dan MonkeyType."
+summary: "Portofolio pribadi dengan dashboard live yang mengagregasi GitHub, WakaTime, dan MonkeyType."
 stack:
   - "Next.js"
   - "TypeScript"
@@ -11,8 +11,6 @@ stack:
   - "Redis"
   - "Docker"
 repoUrl: "https://github.com/tooncoderstis/portofolio"
-liveUrl: "https://example.com"
-startDate: "2026-09"
 featured: true
 ---
 
@@ -24,8 +22,8 @@ Portofolio biasa hanya menampilkan hasil akhir, sulit dinilai konsistensinya, da
 
 Dashboard yang menarik data asli dari platform yang saya pakai sehari-hari, disajikan server-side, dengan cache dan fallback agar tetap tampil saat API sedang bermasalah.
 
-## Tech decisions
+## Keputusan teknis
 
 - Next.js App Router sebagai satu tempat untuk UI dan API route (token tetap di server).
-- Redis untuk cache dan snapshot, **fallback "stale"** yang diberi label jujur.
+- Redis untuk cache dan snapshot, dengan **fallback "stale"** yang diberi label jujur.
 - Konten proyek dan profil sebagai MDX di repo agar mudah direview.

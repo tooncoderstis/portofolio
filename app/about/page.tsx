@@ -9,9 +9,13 @@ export const metadata: Metadata = { title: "Tentang" };
 export default async function AboutPage() {
   const { frontmatter: profile, content } = await getProfile();
 
-  const socials = Object.entries(profile.socials).filter(
-    (entry): entry is [string, string] => Boolean(entry[1]),
-  );
+  const socials = Object.entries(profile.socials)
+    .filter((entry): entry is [string, string] => Boolean(entry[1]))
+    .map(([key, value]) => ({
+      key,
+      label: key === "email" ? "Email" : key,
+      href: key === "email" ? `mailto:${value}` : value,
+    }));
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-14 px-6 py-16">
@@ -25,15 +29,15 @@ export default async function AboutPage() {
         </p>
         {socials.length > 0 ? (
           <div className="flex flex-wrap gap-4 text-sm">
-            {socials.map(([key, url]) => (
+            {socials.map((social) => (
               <a
-                key={key}
-                href={url}
+                key={social.key}
+                href={social.href}
                 target="_blank"
                 rel="noreferrer"
                 className="underline underline-offset-4"
               >
-                {key}
+                {social.label}
               </a>
             ))}
           </div>

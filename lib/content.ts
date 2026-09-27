@@ -24,10 +24,10 @@ const experienceSchema = z.object({
 });
 
 const socialsSchema = z.object({
-  github: z.string().url().optional(),
-  linkedin: z.string().url().optional(),
-  website: z.string().url().optional(),
-  email: z.string().email().optional(),
+  github: z.url().optional(),
+  linkedin: z.url().optional(),
+  website: z.url().optional(),
+  email: z.email().optional(),
 });
 
 export const profileSchema = z.object({
