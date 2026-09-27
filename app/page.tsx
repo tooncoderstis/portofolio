@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { ComingSoonWidget } from "@/components/dashboard/coming-soon-widget";
@@ -8,9 +9,13 @@ import { WidgetSkeleton } from "@/components/dashboard/widget-skeleton";
 import { Reveal } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { site } from "@/lib/site";
+import { getProfile } from "@/lib/content";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const { frontmatter: profile } = await getProfile();
+
   return (
     <main className="mx-auto w-full max-w-5xl px-6 py-16">
       <section className="space-y-6">
@@ -19,23 +24,32 @@ export default function Home() {
         </Reveal>
         <Reveal delay={0.05}>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            {site.name}
+            {profile.name}
           </h1>
         </Reveal>
         <Reveal delay={0.1}>
           <p className="text-muted-foreground max-w-2xl text-lg">
-            {site.tagline}
+            {profile.tagline}
           </p>
         </Reveal>
         <Reveal delay={0.15}>
           <div className="flex flex-wrap gap-3">
-            <Button asChild>
-              <a href={site.links.github} target="_blank" rel="noreferrer">
-                GitHub
-              </a>
-            </Button>
+            {profile.socials.github ? (
+              <Button asChild>
+                <a
+                  href={profile.socials.github}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub
+                </a>
+              </Button>
+            ) : null}
             <Button variant="outline" asChild>
-              <a href="#dashboard">Lihat dashboard</a>
+              <Link href="/projects">Lihat proyek</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <a href="#dashboard">Dashboard</a>
             </Button>
           </div>
         </Reveal>

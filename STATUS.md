@@ -10,9 +10,11 @@
 
 ## TL;DR (konteks 30 detik)
 
-Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **FASE 1: 1.1–1.4 selesai. Dashboard kini menampilkan data asli GitHub + WakaTime + MonkeyType; Umami masih placeholder. Berikutnya 1.5 halaman konten MDX.**
+Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **FASE 1: 1.1–1.5 selesai. Dashboard (GitHub/WakaTime/MonkeyType) + halaman `/about` & `/projects` (MDX) sudah jalan. Berikutnya 1.6 (snapshot harian + grafik tren) atau Umami (butuh kredensial).**
 
 > ⚠️ **Catatan keamanan**: `.env` sementara memakai token GitHub/WakaTime lama yang pernah terekspos di disk. **Rotasi token** sebelum push/deploy.
+>
+> ✏️ **Konten contoh perlu diedit**: `content/profile.mdx` (nama/kompetensi), `content/projects/*.mdx` (judul, ringkasan, `liveUrl` masih `https://example.com`).
 
 ## Checklist Scaffold
 
@@ -32,30 +34,28 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | 1.1 | Fondasi data (env/http/cache/db + `docker-compose.yml`)        | ✅                     |
 | 1.2 | Adapter GitHub end-to-end (GraphQL + REST)                     | ✅                     |
 | 1.3 | API route `GET /api/stats/[source]` (cache + stale + snapshot) | ✅                     |
-| 1.4 | UI shell + widget dashboard                                    | ✅ (menunggu evaluasi) |
-| 1.5 | Halaman konten (MDX: `/about`, `/projects`)                    | ⬜                     |
+| 1.4 | UI shell + widget dashboard (GitHub/WakaTime/MonkeyType)       | ✅                     |
+| 1.5 | Halaman konten MDX (`/about`, `/projects`, `/projects/[slug]`) | ✅ (menunggu evaluasi) |
 | 1.6 | Snapshot harian + grafik tren                                  | ⬜                     |
-
-Adapter lain: WakaTime ✅ · MonkeyType ✅ · Umami ⬜ (kredensial Umami belum ada).
+| —   | Adapter Umami                                                  | ⬜ (butuh kredensial)  |
 
 ## Kondisi saat ini
 
-- **UI**: shadcn/ui (`card`, `badge`, `skeleton`, `button`, `separator`), `next-themes` (tombol gelap/terang), `framer-motion` (`Reveal`), ikon `lucide-react`.
-- **Home** (`app/page.tsx`): hero + grid dashboard. Widget **GitHub** (tile + heatmap + top bahasa), **WakaTime** (total, 7 hari, bahasa), **MonkeyType** (WPM/akurasi/tes/streak + best per durasi) menampilkan data asli via `loadStats()` + `Suspense`; **Umami** masih placeholder "Segera hadir".
-- **Cache versioned**: `cacheKey()` = `<source>:v1` (`CACHE_VERSION`) agar perubahan skema tidak menyajikan bentuk cache lama.
-- Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **48 test** · `build` ✅ · `stats:check` live 3 sumber · HTML `/` memuat widget WakaTime & MonkeyType.
-- Catatan WakaTime: all-time stats akun baru masih 0 (agregasi WakaTime menyusul); bahasa diturunkan dari ringkasan 7 hari sebagai fallback.
-- `docker-compose.yml` (Postgres 16 + Redis 7) sehat.
+- **Konten**: `lib/content.ts` (gray-matter + Zod) memvalidasi `content/profile.mdx` dan `content/projects/*.mdx` (schema ketat; slug file ↔ frontmatter divalidasi). Render MDX via `next-mdx-remote/rsc` + komponen styling di `components/mdx/`.
+- **Halaman**: `/` (hero + dashboard, `force-dynamic`), `/about` (bio, kompetensi, pengalaman), `/projects` (filter status client-side), `/projects/[slug]` (SSG via `generateStaticParams`, 404 untuk slug tak dikenal). Navigasi di header.
+- **Home dinamis**: `export const dynamic = "force-dynamic"` agar data dashboard tidak ter-bake saat build; cache tetap dikelola Redis.
+- **Deploy**: `next.config.ts` memakai `outputFileTracingIncludes` agar `content/**` ikut ke image standalone (terverifikasi ada di `.next/standalone/content`).
+- Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **56 test** · `build` ✅ · live: `/about`, `/projects`, `/projects/portofolio`, `/projects/contoh-proyek` 200; slug tak dikenal 404.
+- Git repo lokal `main`; belum ada remote.
 
 ## Yang belum selesai / menunggu
 
 | Item                              | Catatan                                                            |
 | --------------------------------- | ------------------------------------------------------------------ |
-| Evaluasi manual sub-tahap 1.4     | `npm run dev` → lihat 3 widget berisi data & toggle tema           |
-| Adapter WakaTime / MonkeyType     | ✅ selesai                                                         |
-| Adapter Umami                     | Menunggu kredensial Umami                                          |
-| Halaman konten (1.5)              | `/about`, `/projects` (MDX)                                        |
+| Evaluasi manual sub-tahap 1.5     | `npm run dev` → buka `/about`, `/projects`, detail proyek          |
+| Edit konten contoh                | Nama, kompetensi, pengalaman, proyek, `liveUrl` nyata              |
 | Snapshot harian + tren (1.6)      | Job terjadwal + grafik                                             |
+| Adapter Umami                     | Menunggu kredensial Umami                                          |
 | Rotasi token (GitHub & WakaTime)  | Token lama pernah terekspos di disk                                |
 | Deploy nyata ke EasyPanel         | Butuh registry + env produksi dari pemilik                         |
 | Push ke GitHub                    | Menunggu perintah pemilik; `gh` belum dijalankan                   |
@@ -65,9 +65,9 @@ Adapter lain: WakaTime ✅ · MonkeyType ✅ · Umami ⬜ (kredensial Umami belu
 
 ```sh
 npm install
-docker compose up -d                 # Postgres + Redis lokal
-npm run dev                          # http://localhost:3000
-npm run stats:check                  # verifikasi live adapter GitHub (butuh .env)
+docker compose up -d     # Postgres + Redis lokal
+npm run dev              # http://localhost:3000
+npm run stats:check      # verifikasi live 3 sumber (butuh .env)
 npm run lint
 npm run typecheck
 npm test
