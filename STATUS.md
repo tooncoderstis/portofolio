@@ -5,7 +5,7 @@
 > **Jangan simpan kredensial di file ini.**
 
 - **Terakhir diperbarui**: 2026-09-27
-- **Versi produksi aktif**: belum deploy ke EasyPanel (image lokal `portofolio:test` sudah terverifikasi)
+- **Versi produksi aktif**: belum dipasang di EasyPanel; image `ghcr.io/tooncoderstis/portofolio:latest` sudah terbit via CI
 - **Platform**: Next.js (App Router) + TypeScript + Tailwind + shadcn/ui · Postgres + Redis · EasyPanel (Docker image)
 
 ## TL;DR (konteks 30 detik)
@@ -47,6 +47,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 - Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **68 test** · `build` ✅. Live: snapshot 401 tanpa secret; dengan secret → github/wakatime/monkeytype `ok`, umami `skipped`; 3 baris `snapshot` di Postgres; `/api/trends/github` mengembalikan poin; beranda memuat seksi "Tren (30 hari)".
 - **Home dinamis**: `export const dynamic = "force-dynamic"` agar data dashboard tidak ter-bake saat build; cache tetap dikelola Redis. `next.config.ts` memakai `outputFileTracingIncludes` agar `content/**` ikut ke image standalone.
 - Repo publik: **https://github.com/tooncoderstis/portofolio** (branch `main`), CI hijau (lint, typecheck, test, build, gitleaks).
+- CI juga **membangun & mempublikasikan image** ke `ghcr.io/tooncoderstis/portofolio` (workflow `docker-publish`, tag `latest`/`main`/`sha` + semver saat tag).
 - `.env` tidak ter-commit (di-ignore); gitleaks memindai seluruh history di CI.
 
 ## Yang belum selesai / menunggu
