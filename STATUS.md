@@ -49,6 +49,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 - Repo publik: **https://github.com/tooncoderstis/portofolio** (branch `main`), CI hijau (lint, typecheck, test, build, gitleaks).
 - CI juga **membangun & mempublikasikan image** ke `ghcr.io/tooncoderstis/portofolio` (workflow `docker-publish`, tag `latest`/`main`/`sha` + semver saat tag).
 - `.env` tidak ter-commit (di-ignore); gitleaks memindai seluruh history di CI.
+- Sesi 2026-09-27 diakhiri: dev infra dihentikan (`docker compose down`; volume tetap). Lanjutkan dengan `docker compose up -d` lalu `npm run dev`.
 
 ## Yang belum selesai / menunggu
 
