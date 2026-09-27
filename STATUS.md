@@ -46,7 +46,8 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 - **Snapshot & tren**: `lib/snapshot.ts` (`snapshotAll` → `refreshStats` paksa fetch + upsert), `POST/GET /api/snapshot` (dilindungi `SNAPSHOT_SECRET`; 401 tanpa secret di produksi), `lib/trends.ts` (+ `extractMetric`), `GET /api/trends/[source]?days=30`, dan widget `TrendWidget`/`TrendChart` di beranda.
 - Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **68 test** · `build` ✅. Live: snapshot 401 tanpa secret; dengan secret → github/wakatime/monkeytype `ok`, umami `skipped`; 3 baris `snapshot` di Postgres; `/api/trends/github` mengembalikan poin; beranda memuat seksi "Tren (30 hari)".
 - **Home dinamis**: `export const dynamic = "force-dynamic"` agar data dashboard tidak ter-bake saat build; cache tetap dikelola Redis. `next.config.ts` memakai `outputFileTracingIncludes` agar `content/**` ikut ke image standalone.
-- Git repo lokal `main`; belum ada remote.
+- Repo publik: **https://github.com/tooncoderstis/portofolio** (branch `main`), CI hijau (lint, typecheck, test, build, gitleaks).
+- `.env` tidak ter-commit (di-ignore); gitleaks memindai seluruh history di CI.
 
 ## Yang belum selesai / menunggu
 
@@ -57,7 +58,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | Adapter Umami                     | Menunggu kredensial Umami                                          |
 | Rotasi token (GitHub & WakaTime)  | Token lama pernah terekspos di disk                                |
 | Deploy nyata ke EasyPanel         | Butuh registry + env produksi dari pemilik                         |
-| Push ke GitHub                    | Menunggu perintah pemilik; `gh` belum dijalankan                   |
+| Dependabot PR (Next 16, dll.)     | Muncul otomatis; bump Next 16 breaking → tinjau manual             |
 | `npm audit` (postcss via Next 15) | Tunda; perbaikan butuh Next 16 (breaking) → pertimbangkan ADR baru |
 
 ## Cara menjalankan & menguji
