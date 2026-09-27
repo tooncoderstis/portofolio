@@ -1,10 +1,13 @@
 ## Ringkasan
+
 <Jelaskan perubahan & alasannya.>
 
 ## Jenis perubahan
+
 - [ ] feat · [ ] fix · [ ] docs · [ ] refactor · [ ] test · [ ] chore
 
 ## Checklist
+
 - [ ] Test ditambahkan/diperbarui dan lolos
 - [ ] Formatter/linter dijalankan
 - [ ] `CHANGELOG.md` diperbarui
@@ -13,4 +16,5 @@
 - [ ] Tidak ada rahasia yang ter-commit
 
 ## Terkait
+
 Closes #<issue>

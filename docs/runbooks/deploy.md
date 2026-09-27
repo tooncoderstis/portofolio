@@ -4,11 +4,13 @@
 > Skrip & Dockerfile: [`deploy/easypanel-docker/`](../../deploy/easypanel-docker/).
 
 ## Prasyarat
+
 - Docker lokal berjalan; akses push ke registry (mis. GHCR).
 - Layanan Postgres & Redis tersedia (bisa dari template EasyPanel).
 - Akun EasyPanel + domain dengan DNS mengarah ke VPS.
 
 ## Langkah
+
 1. **Build & push** (lokal):
    `powershell -File deploy/easypanel-docker/build-push.ps1 -Image <registry>/portofolio -Tag <versi> -Push`
 2. **EasyPanel**: Project → Create Service → App → **Source: Docker Image** → isi `<registry>/portofolio:<versi>`
@@ -21,6 +23,7 @@
 8. **Rollback**: ubah tag image ke versi sebelumnya → Deploy.
 
 ## Keamanan & operasional
+
 - Rotasi kredensial yang pernah terekspos; gunakan password DB kuat.
 - Backup terjadwal Postgres (`pg_dump`).
 - Pantau log sinkronisasi untuk mendeteksi upstream down / rate-limit.

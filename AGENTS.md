@@ -3,12 +3,14 @@
 ## Project Bootstrap (WAJIB DIBACA DULU)
 
 > Hemat token & jaga konteks antar sesi. Urutan baca:
+>
 > 1. `STATUS.md` — kondisi & pekerjaan terkini (satu-satunya sumber kebenaran progres).
 > 2. `PRD.md` — **jangan baca penuh**; hanya buka section yang relevan dengan tugas.
 > 3. `docs/adr/` — 1–2 ADR yang terkait perubahan.
 > 4. Ekor `CHANGELOG.md` bila perlu konteks rilis.
 
 Aturan kerja:
+
 - Ikuti DoD: `kode → test → formatter → entri CHANGELOG → update STATUS → ADR bila keputusan`.
 - Conventional Commits; jangan commit rahasia (`.env` di-ignore).
 - Setiap route/endpoint ber-mutasi harus punya test.

@@ -17,7 +17,7 @@ Target pengguna: perekrut, klien potensial, dan sesama developer yang ingin meni
 ## 2. Prinsip Desain Utama
 
 - **Transparansi**: semua metrik berasal dari sumber pihak ketiga yang bisa diverifikasi; always tampilkan "terakhir disinkron".
-- **Jujur saat gagal**: bila API upstream mati, tampilkan data cache terakhir dengan label *stale*, bukan data palsu — jangan pernah menampilkan angka palsu atau blank.
+- **Jujur saat gagal**: bila API upstream mati, tampilkan data cache terakhir dengan label _stale_, bukan data palsu — jangan pernah menampilkan angka palsu atau blank.
 - **Server-side only**: token API tidak pernah dikirim ke browser.
 - **Hemat token & biaya**: cache agresif (ISR + Redis) untuk menekan rate-limit dan jumlah request upstream.
 - **Nol kredensial di repo**: semua rahasia lewat environment variable; `.env` di-ignore.
@@ -25,10 +25,10 @@ Target pengguna: perekrut, klien potensial, dan sesama developer yang ingin meni
 
 ## 3. Peran Pengguna (Roles)
 
-| Role | Deskripsi | Akses |
-|---|---|---|
-| Pengunjung (guest) | Perekrut, klien, sesama developer | Semua halaman baca; tanpa login |
-| Pemilik (owner) | Developer pemilik portofolio | Menulis konten MDX, mengatur env, deploy |
+| Role               | Deskripsi                         | Akses                                    |
+| ------------------ | --------------------------------- | ---------------------------------------- |
+| Pengunjung (guest) | Perekrut, klien, sesama developer | Semua halaman baca; tanpa login          |
+| Pemilik (owner)    | Developer pemilik portofolio      | Menulis konten MDX, mengatur env, deploy |
 
 Tidak ada autentikasi/login pada FASE 1–2. Semua konten bersifat publik-baca.
 
@@ -41,28 +41,34 @@ BACKLOG → Leaderboard publik, blog, multi-bahasa, mode tamu interaktif
 ```
 
 ### 4.1 Hero & Identitas
+
 - Menampilkan nama, role, bio singkat, avatar, tautan sosial dan kontak.
 - **Acceptance criteria**: konten berasal dari `content/profile.*` (MDX/config); render tanpa data eksternal; Lighthouse Accessibility >= 90.
 
 ### 4.2 Dashboard Live
+
 - Widget: GitHub Contributions, WakaTime, Umami Analytics, MonkeyType, dan status sistem.
 - Setiap widget punya state **loading / sukses / error**. Saat upstream gagal → fallback ke snapshot cache + label "stale, last synced ...".
 - **Acceptance criteria**: `GET /api/stats/{github|wakatime|umami|monkeytype}` mengembalikan `200` dengan skema JSON tetap meski upstream down; token tidak pernah muncul di bundle client; request upstream <= 1 per TTL (1 jam) — diverifikasi via log.
 
 ### 4.3 Tren (Charts)
+
 - Grafik tren metrik lintas waktu, bersumber dari snapshot harian di Postgres.
 - **Acceptance criteria**: job snapshot menulis satu baris per sumber per hari; endpoint tren mengembalikan deret waktu untuk rentang yang diminta.
 
 ### 4.4 Tentang Saya & Kompetensi
+
 - Bio, kompetensi/skill dengan level, pengalaman/karier (timeline), pendidikan.
 - **Acceptance criteria**: konten ter-render dari MDX; struktur dapat diverifikasi manual per file.
 
 ### 4.5 Proyek
+
 - `/projects`: daftar proyek dengan filter status `selesai | sedang dikerjakan`.
 - `/projects/[slug]`: deskripsi, masalah→solusi, tech stack, gambar, tautan repo, dan **live demo (EasyPanel)**.
 - **Acceptance criteria**: setiap proyek punya frontmatter tervalidasi (`title`, `slug`, `status`, `stack`, `liveUrl` opsional); halaman 404 ditangani untuk slug tidak dikenal.
 
 ### 4.6 Kesehatan Sistem
+
 - `/api/health` mengembalikan `{ status, version, time }` dengan `200`.
 
 ## 5. Model Data (ERD)
@@ -103,14 +109,14 @@ Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`.
 
 ## 7. KPI & Metrik Keberhasilan
 
-| Area | Metrik | Target |
-|---|---|---|
+| Area         | Metrik                                 | Target                    |
+| ------------ | -------------------------------------- | ------------------------- |
 | Akurasi data | Widget menampilkan data upstream segar | 100% saat upstream normal |
-| Ketahanan | Widget tetap tampil saat upstream down | 100% fallback cache |
-| Performa | Lighthouse Performance / Accessibility | >= 90 |
-| Rate-limit | Request upstream per sumber per hari | <= 24 (cache 1 jam) |
-| Kualitas | CI hijau pada `main` | 100% |
-| Konten | Proyek terdaftar & ter-render | Semua entri MDX valid |
+| Ketahanan    | Widget tetap tampil saat upstream down | 100% fallback cache       |
+| Performa     | Lighthouse Performance / Accessibility | >= 90                     |
+| Rate-limit   | Request upstream per sumber per hari   | <= 24 (cache 1 jam)       |
+| Kualitas     | CI hijau pada `main`                   | 100%                      |
+| Konten       | Proyek terdaftar & ter-render          | Semua entri MDX valid     |
 
 ## 8. Kepatuhan & Keamanan
 
@@ -121,13 +127,13 @@ Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`.
 
 ## 9. Risiko & Mitigasi
 
-| # | Risiko | Dampak | Mitigasi |
-|---|---|---|---|
-| 1 | Rate-limit / API upstream berubah | Widget gagal | Cache ISR + Redis, fallback snapshot, adapter per-sumber terisolasi |
-| 2 | Token bocor ke client | Keamanan | Server-side only, tidak ada `NEXT_PUBLIC_` untuk token, secret scan CI |
-| 3 | Umami self-host tidak tersedia | Widget kosong | Fallback snapshot + label stale |
-| 4 | Snapshot job gagal | Tren bolong | Alert log + backfill dari range API bila tersedia |
-| 5 | Perubahan skema API pihak ketiga | Build/runtime error | Test kontrak endpoint, pin versi API bila memungkinkan |
+| #   | Risiko                            | Dampak              | Mitigasi                                                               |
+| --- | --------------------------------- | ------------------- | ---------------------------------------------------------------------- |
+| 1   | Rate-limit / API upstream berubah | Widget gagal        | Cache ISR + Redis, fallback snapshot, adapter per-sumber terisolasi    |
+| 2   | Token bocor ke client             | Keamanan            | Server-side only, tidak ada `NEXT_PUBLIC_` untuk token, secret scan CI |
+| 3   | Umami self-host tidak tersedia    | Widget kosong       | Fallback snapshot + label stale                                        |
+| 4   | Snapshot job gagal                | Tren bolong         | Alert log + backfill dari range API bila tersedia                      |
+| 5   | Perubahan skema API pihak ketiga  | Build/runtime error | Test kontrak endpoint, pin versi API bila memungkinkan                 |
 
 ## 10. Out of Scope
 
@@ -138,13 +144,13 @@ Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`.
 
 ## 11. Ringkasan Keputusan
 
-| # | Pertanyaan | Keputusan |
-|---|---|---|
-| 1 | Stack? | Next.js App Router + TypeScript + Tailwind + shadcn/ui (ADR-0001) |
-| 2 | Cara menarik data eksternal? | API route server-side + ISR/revalidate + Redis (ADR-0002) |
-| 3 | Deploy di mana? | EasyPanel via Docker image (ADR-0003) |
-| 4 | Bagaimana rahasia dikelola? | Env var server-only, `.env` di-ignore (ADR-0004) |
-| 5 | Konten proyek & profil? | MDX in-repo ber-frontmatter (ADR-0005) |
-| 6 | Sumber grafik tren? | Snapshot harian Postgres (ADR-0006) |
-| 7 | Perilaku saat upstream gagal? | Fallback snapshot cache + label "stale" |
-| 8 | Gaya visual? | Ekspresif/animatif, dark/light, aksesibel |
+| #   | Pertanyaan                    | Keputusan                                                         |
+| --- | ----------------------------- | ----------------------------------------------------------------- |
+| 1   | Stack?                        | Next.js App Router + TypeScript + Tailwind + shadcn/ui (ADR-0001) |
+| 2   | Cara menarik data eksternal?  | API route server-side + ISR/revalidate + Redis (ADR-0002)         |
+| 3   | Deploy di mana?               | EasyPanel via Docker image (ADR-0003)                             |
+| 4   | Bagaimana rahasia dikelola?   | Env var server-only, `.env` di-ignore (ADR-0004)                  |
+| 5   | Konten proyek & profil?       | MDX in-repo ber-frontmatter (ADR-0005)                            |
+| 6   | Sumber grafik tren?           | Snapshot harian Postgres (ADR-0006)                               |
+| 7   | Perilaku saat upstream gagal? | Fallback snapshot cache + label "stale"                           |
+| 8   | Gaya visual?                  | Ekspresif/animatif, dark/light, aksesibel                         |

@@ -4,14 +4,14 @@ Kumpulan keputusan arsitektur proyek **Portofolio**, mengikuti format [Nygard](h
 
 ## Daftar ADR
 
-| # | Judul | Status | Tanggal |
-|---|---|---|---|
-| [0001](0001-stack-nextjs.md) | Stack: Next.js App Router + TypeScript + Tailwind + shadcn/ui | Diterima | 2026-09-27 |
-| [0002](0002-data-aggregation.md) | Agregasi data eksternal server-side + ISR/revalidate + Redis | Diterima | 2026-09-27 |
-| [0003](0003-deploy-easypanel-docker.md) | Deploy EasyPanel via Docker image (Next.js standalone) | Diterima | 2026-09-27 |
-| [0004](0004-secret-management.md) | Manajemen rahasia: environment variable server-only | Diterima | 2026-09-27 |
-| [0005](0005-content-mdx.md) | Konten proyek & profil sebagai MDX in-repo | Diterima | 2026-09-27 |
-| [0006](0006-trend-snapshots-postgres.md) | Grafik tren dari snapshot harian Postgres | Diterima | 2026-09-27 |
+| #                                        | Judul                                                         | Status   | Tanggal    |
+| ---------------------------------------- | ------------------------------------------------------------- | -------- | ---------- |
+| [0001](0001-stack-nextjs.md)             | Stack: Next.js App Router + TypeScript + Tailwind + shadcn/ui | Diterima | 2026-09-27 |
+| [0002](0002-data-aggregation.md)         | Agregasi data eksternal server-side + ISR/revalidate + Redis  | Diterima | 2026-09-27 |
+| [0003](0003-deploy-easypanel-docker.md)  | Deploy EasyPanel via Docker image (Next.js standalone)        | Diterima | 2026-09-27 |
+| [0004](0004-secret-management.md)        | Manajemen rahasia: environment variable server-only           | Diterima | 2026-09-27 |
+| [0005](0005-content-mdx.md)              | Konten proyek & profil sebagai MDX in-repo                    | Diterima | 2026-09-27 |
+| [0006](0006-trend-snapshots-postgres.md) | Grafik tren dari snapshot harian Postgres                     | Diterima | 2026-09-27 |
 
 ## Cara menambah ADR
 
