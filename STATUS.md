@@ -10,7 +10,7 @@
 
 ## TL;DR (konteks 30 detik)
 
-Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **Tahap 0–5 (scaffold) selesai; berikutnya FASE 1: membangun fitur dashboard + halaman konten.**
+Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **Tahap 0–5 (scaffold) selesai; berikutnya FASE 1 — saat ini menunggu kredensial API diisi (lihat `docs/runbooks/credentials.md`).**
 
 ## Checklist Tahap
 
@@ -33,13 +33,14 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 
 ## Yang belum selesai / menunggu
 
-| Item                              | Catatan                                                            |
-| --------------------------------- | ------------------------------------------------------------------ |
-| Evaluasi manual Tahap 5           | `docker build` + `docker run`; cek `/api/health`                   |
-| Deploy nyata ke EasyPanel         | Butuh registry + env produksi dari pemilik                         |
-| Fitur dashboard FASE 1            | GitHub/WakaTime/Umami/MonkeyType, tren, halaman konten             |
-| Push ke GitHub                    | Menunggu perintah pemilik; `gh` belum dijalankan                   |
-| `npm audit` (postcss via Next 15) | Tunda; perbaikan butuh Next 16 (breaking) → pertimbangkan ADR baru |
+| Item                              | Catatan                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------ |
+| Evaluasi manual Tahap 5           | `docker build` + `docker run`; cek `/api/health`                         |
+| Deploy nyata ke EasyPanel         | Butuh registry + env produksi dari pemilik                               |
+| Kredensial API                    | Menunggu pemilik mengisi `.env`; panduan: `docs/runbooks/credentials.md` |
+| Fitur dashboard FASE 1            | GitHub/WakaTime/Umami/MonkeyType, tren, halaman konten                   |
+| Push ke GitHub                    | Menunggu perintah pemilik; `gh` belum dijalankan                         |
+| `npm audit` (postcss via Next 15) | Tunda; perbaikan butuh Next 16 (breaking) → pertimbangkan ADR baru       |
 
 ## Cara menjalankan & menguji
 
