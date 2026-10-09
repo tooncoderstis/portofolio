@@ -11,7 +11,7 @@
 
 Aturan kerja:
 
-- Ikuti DoD: `kode → test → formatter → entri CHANGELOG → update STATUS → ADR bila keputusan`.
+- Ikuti DoD: `kode → test → formatter → entri CHANGELOG → update STATUS → ADR bila keputusan → npm run hub:report`.
 - Conventional Commits; jangan commit rahasia (`.env` di-ignore).
 - Setiap route/endpoint ber-mutasi harus punya test.
 - Untuk proyek baru/scaffold, gunakan skill `aasaprojectkit`.
