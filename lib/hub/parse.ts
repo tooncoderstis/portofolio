@@ -1,6 +1,6 @@
 import type { IngestPhase, PhaseStatus } from "./schema";
 
-const PHASE_ID = /^\d+(?:\.\d+)*$/;
+const PHASE_ID = /^(?:\d+(?:\.\d+)*|[A-Za-z]+)$/;
 const SEPARATOR = /^:?-{2,}:?$/;
 
 function detectStatus(cells: string[]): PhaseStatus | null {
@@ -65,14 +65,26 @@ export function parseStatusPhases(markdown: string): IngestPhase[] {
 }
 
 export function comparePhaseIds(a: string, b: string): number {
-  const left = a.split(".").map(Number);
-  const right = b.split(".").map(Number);
+  const left = a.split(".");
+  const right = b.split(".");
   const length = Math.max(left.length, right.length);
 
   for (let index = 0; index < length; index += 1) {
-    const diff = (left[index] ?? -1) - (right[index] ?? -1);
+    const l = left[index];
+    const r = right[index];
 
-    if (diff !== 0) return diff;
+    if (l === undefined) return -1;
+    if (r === undefined) return 1;
+
+    if (/^\d+$/.test(l) && /^\d+$/.test(r)) {
+      const diff = Number(l) - Number(r);
+
+      if (diff !== 0) return diff;
+    } else {
+      const cmp = l.localeCompare(r);
+
+      if (cmp !== 0) return cmp;
+    }
   }
 
   return 0;

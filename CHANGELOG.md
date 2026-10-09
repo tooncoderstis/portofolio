@@ -41,4 +41,5 @@ Status terkini: [`STATUS.md`](STATUS.md).
 
 ### Fixed
 
+- Parser `STATUS.md` kini menerima **id fase huruf** (mis. `A`, `B`) selain numerik (`1.1`, `2`), sehingga proyek seperti SigmaLab yang memakai tahap A–H ikut terbaca; pengurutan fase campuran juga diperbaiki.
 - Sinkronisasi `package-lock.json` lintas-platform: menambahkan `@emnapi/core` & `@emnapi/runtime` sebagai devDependency agar `npm ci` berhasil di Linux/CI (dep opsional `sharp`-wasm/`@napi-rs/wasm-runtime` yang di-prune di Windows).

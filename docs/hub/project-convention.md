@@ -33,7 +33,7 @@ HUB_PROJECT_NAME=SigmaLab
 
 ## Format `STATUS.md` yang didukung
 
-Fase ditulis sebagai baris tabel markdown dengan **id fase numerik** di kolom pertama dan **penanda status** berupa emoji:
+Fase ditulis sebagai baris tabel markdown dengan **id fase** di kolom pertama (numerik seperti `1.1`, `2`, atau huruf seperti `A`, `B`) dan **penanda status** berupa emoji:
 
 ```md
 | Fase | Judul               | Status |
@@ -51,7 +51,7 @@ Penanda status:
 | 🔄 🚧 ⏳ | `in_progress` |
 | ⬜ ❌ ⛔ | `todo`        |
 
-Baris dengan id non-numerik (mis. `—`) diabaikan. Format tabel bebas (3–4 kolom) selama id berada di kolom pertama dan judul di kolom kedua.
+Baris dengan id yang bukan numerik/huruf (mis. `—`) diabaikan. Format tabel bebas (3–4 kolom) selama id berada di kolom pertama dan judul di kolom kedua.
 
 ## Tips
 

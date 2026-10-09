@@ -36,6 +36,17 @@ describe("parseStatusPhases", () => {
     ]);
   });
 
+  it("menerima id tahap berupa huruf", () => {
+    const raw =
+      "| Tahap | Judul | Status |\n|---|---|---|\n| 0 | Fondasi | ✅ |\n| A | Dokumentasi | ✅ |\n| G | Fase 2 | ⬜ |";
+
+    expect(parseStatusPhases(raw)).toEqual([
+      { id: "0", title: "Fondasi", status: "done" },
+      { id: "A", title: "Dokumentasi", status: "done" },
+      { id: "G", title: "Fase 2", status: "todo" },
+    ]);
+  });
+
   it("mengembalikan array kosong untuk markdown kosong", () => {
     expect(parseStatusPhases("")).toEqual([]);
   });
@@ -54,5 +65,11 @@ describe("comparePhaseIds", () => {
     const sorted = ["1.10", "2", "1.2", "1.1"].sort(comparePhaseIds);
 
     expect(sorted).toEqual(["1.1", "1.2", "1.10", "2"]);
+  });
+
+  it("mengurutkan id huruf", () => {
+    expect(comparePhaseIds("A", "B")).toBeLessThan(0);
+    expect(comparePhaseIds("B", "A")).toBeGreaterThan(0);
+    expect(comparePhaseIds("A", "A")).toBe(0);
   });
 });
