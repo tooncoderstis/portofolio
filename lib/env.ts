@@ -32,6 +32,12 @@ const envSchema = z.object({
   DATABASE_URL: optionalString,
   REDIS_URL: optionalString,
   SNAPSHOT_SECRET: optionalString,
+  HUB_PASSWORD_HASH: optionalString,
+  HUB_SESSION_SECRET: optionalString,
+  HUB_INGEST_SECRET: optionalString,
+  VAPID_PUBLIC_KEY: optionalString,
+  VAPID_PRIVATE_KEY: optionalString,
+  VAPID_SUBJECT: optionalString,
 });
 
 export type Env = z.infer<typeof envSchema>;

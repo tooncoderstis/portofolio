@@ -12,6 +12,7 @@ const nav = [
   { href: "/", label: "Beranda" },
   { href: "/about", label: "Tentang" },
   { href: "/projects", label: "Proyek" },
+  { href: "/hub", label: "Hub" },
 ];
 
 export async function generateMetadata(): Promise<Metadata> {

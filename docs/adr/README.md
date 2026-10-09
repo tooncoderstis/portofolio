@@ -12,6 +12,9 @@ Kumpulan keputusan arsitektur proyek **Portofolio**, mengikuti format [Nygard](h
 | [0004](0004-secret-management.md)        | Manajemen rahasia: environment variable server-only           | Diterima | 2026-09-27 |
 | [0005](0005-content-mdx.md)              | Konten proyek & profil sebagai MDX in-repo                    | Diterima | 2026-09-27 |
 | [0006](0006-trend-snapshots-postgres.md) | Grafik tren dari snapshot harian Postgres                     | Diterima | 2026-09-27 |
+| [0007](0007-auth-owner.md)               | Autentikasi owner Hub: password + session cookie              | Diterima | 2026-10-09 |
+| [0008](0008-project-hub-push.md)         | Project Hub berbasis push: database pusat + API ingest        | Diterima | 2026-10-09 |
+| [0009](0009-notifikasi-fase-webpush.md)  | Notifikasi penyelesaian fase via Web Push + inbox             | Diterima | 2026-10-09 |
 
 ## Cara menambah ADR
 

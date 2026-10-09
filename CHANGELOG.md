@@ -29,3 +29,11 @@ Status terkini: [`STATUS.md`](STATUS.md).
 - Konten nyata: `content/profile.mdx` (Tooncoder, BPS Kabupaten Bengkulu Tengah, kompetensi & kontak) dan proyek `sigmalab`, `klinix`, `portofolio`; tautan email dirender `mailto:`.
 - Repo dipublikasikan ke GitHub (`tooncoderstis/portofolio`) dengan CI (lint, typecheck, test, build, gitleaks). Secret scan diganti ke gitleaks CLI (memindai seluruh history) karena action bawaan gagal pada push pertama.
 - CI publikasi image: `.github/workflows/docker-publish.yml` membangun `deploy/easypanel-docker/Dockerfile` dan push ke `ghcr.io/tooncoderstis/portofolio` (tag `latest`/`main`/`sha` + semver). Runbook deploy diperluas (Opsi GHCR, env, scheduled snapshot, paket publik).
+- FASE 3 — Project Hub owner-only:
+  - Auth owner: `lib/hub/auth.ts` (scrypt + session cookie HMAC), `lib/hub/session.ts`, `POST /api/hub/auth/{login,logout}`, halaman `/login`, guard `app/hub/layout.tsx`, dan skrip `npm run hub:hash`.
+  - Data & ingest: skema `hub_project`/`hub_phase`/`hub_decision`/`hub_notification`/`push_subscription` di `lib/hub/store.ts`, parser `STATUS.md` (`lib/hub/parse.ts`), validasi Zod (`lib/hub/schema.ts`), `lib/hub/ingest.ts`, `POST /api/hub/ingest` (secret `HUB_INGEST_SECRET`), dan `npm run hub:register` (scan `E:\aasatech`).
+  - UI Hub: `/hub` (daftar + progres), `/hub/[slug]` (tab Ringkasan/STATUS.md/PRD.md/Keputusan), `/hub/notifications` (inbox), komponen `components/hub/*` dengan `react-markdown` + `remark-gfm`.
+  - Keputusan fase: `POST /api/hub/projects/[slug]/decision` + formulir lanjut/tahan (murni catatan, tanpa eksekusi).
+  - Notifikasi: `lib/hub/push.ts` (`web-push` + VAPID), service worker `public/sw.js`, subscribe/unsubscribe, `npm run hub:vapid`; fase yang selesai mengirim inbox + Web Push.
+  - Integrasi skill `aasaprojectkit`: template `hub-report.mjs` + langkah pelaporan fase; `docs/hub/project-convention.md`.
+  - ADR-0007 (auth owner), ADR-0008 (hub push), ADR-0009 (notifikasi Web Push).

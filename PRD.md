@@ -30,13 +30,14 @@ Target pengguna: perekrut, klien potensial, dan sesama developer yang ingin meni
 | Pengunjung (guest) | Perekrut, klien, sesama developer | Semua halaman baca; tanpa login          |
 | Pemilik (owner)    | Developer pemilik portofolio      | Menulis konten MDX, mengatur env, deploy |
 
-Tidak ada autentikasi/login pada FASE 1–2. Semua konten bersifat publik-baca.
+Pengunjung tidak perlu login. **FASE 3** menambahkan login owner (password + session cookie, ADR-0007) untuk mengakses `/hub`: melihat progres seluruh proyek, mencatat keputusan fase, dan menerima notifikasi penyelesaian fase.
 
 ## 4. Fase / Modul Pengembangan
 
 ```
 FASE 1 → Dashboard live + identitas + halaman proyek (MVP)
 FASE 2 → Halaman detail proyek lanjutan + SEO/perf polish + snapshot tren
+FASE 3 → Project Hub owner-only: login, progres semua proyek, keputusan fase, notifikasi
 BACKLOG → Leaderboard publik, blog, multi-bahasa, mode tamu interaktif
 ```
 
@@ -71,6 +72,15 @@ BACKLOG → Leaderboard publik, blog, multi-bahasa, mode tamu interaktif
 
 - `/api/health` mengembalikan `{ status, version, time }` dengan `200`.
 
+### 4.7 Hub Proyek (owner-only, FASE 3)
+
+- Login owner (`/login`) dengan password + session cookie.
+- `/hub`: daftar semua proyek E:\aasatech dengan progres fase; `/hub/[slug]`: detail fase, `STATUS.md`, `PRD.md`, dan riwayat keputusan.
+- Proyek melapor lewat `POST /api/hub/ingest` (secret); hub mem-parse fase dari `STATUS.md` dan mendeteksi fase selesai.
+- Keputusan "lanjut/tidak" hanya dicatat (tanpa eksekusi kode).
+- Notifikasi fase selesai: inbox `/hub/notifications` + Web Push.
+- **Acceptance criteria**: ingest menolak tanpa secret (401) & payload tak valid (400); fase yang berubah menjadi selesai membuat satu notifikasi + push; halaman hub menolak akses bukan owner.
+
 ## 5. Model Data (ERD)
 
 FASE 1 konten berbasis file (MDX). Postgres dipakai untuk snapshot tren (FASE 2).
@@ -93,10 +103,48 @@ erDiagram
         text repo_url
         text live_url
     }
+    HUB_PROJECT {
+        text slug PK
+        text name
+        text path
+        text status_md
+        text prd_md
+        timestamptz updated_at
+    }
+    HUB_PHASE {
+        text project FK
+        text phase_id
+        text title
+        text status
+        timestamptz updated_at
+    }
+    HUB_NOTIFICATION {
+        bigserial id PK
+        text project
+        text phase_id
+        text type
+        boolean read
+        timestamptz created_at
+    }
+    HUB_DECISION {
+        bigserial id PK
+        text project
+        text action
+        text phase_id
+        text note
+        timestamptz created_at
+    }
+    PUSH_SUBSCRIPTION {
+        bigserial id PK
+        text endpoint
+        jsonb keys
+    }
     SNAPSHOT }o--|| PROJECT : "tidak berelasi (independen)"
+    HUB_PROJECT ||--o{ HUB_PHASE : "memiliki"
+    HUB_PROJECT ||--o{ HUB_DECISION : "memiliki"
 ```
 
-Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`.
+Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`; unik `(project, phase_id)` pada `HUB_PHASE`; unik `endpoint` pada `PUSH_SUBSCRIPTION`.
 
 ## 6. Non-Functional Requirements
 
@@ -137,8 +185,9 @@ Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`.
 
 ## 10. Out of Scope
 
-- Autentikasi/login, multi-user, komentar.
+- Multi-user & komentar (Hub bersifat single-owner, ADR-0007).
 - CMS/admin panel (konten berbasis MDX di repo).
+- Eksekusi perintah otomatis dari web (keputusan fase hanya dicatat, tidak menjalankan kode).
 - Blog dan multi-bahasa (BACKLOG).
 - Leaderboard publik real-time (BACKLOG).
 
@@ -154,3 +203,6 @@ Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`.
 | 6   | Sumber grafik tren?           | Snapshot harian Postgres (ADR-0006)                               |
 | 7   | Perilaku saat upstream gagal? | Fallback snapshot cache + label "stale"                           |
 | 8   | Gaya visual?                  | Ekspresif/animatif, dark/light, aksesibel                         |
+| 9   | Autentikasi owner?            | Password + session cookie HMAC (ADR-0007)                         |
+| 10  | Sumber progres proyek?        | Push dari proyek ke Postgres via API ingest (ADR-0008)            |
+| 11  | Notifikasi fase selesai?      | Web Push + inbox (ADR-0009)                                       |
