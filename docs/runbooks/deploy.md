@@ -3,6 +3,24 @@
 > Target: Next.js `standalone` di EasyPanel "Source: Docker Image". Detail keputusan: [ADR-0003](../adr/0003-deploy-easypanel-docker.md).
 > Dockerfile: [`deploy/easypanel-docker/Dockerfile`](../../deploy/easypanel-docker/Dockerfile).
 
+## Deployment saat ini
+
+| Item              | Nilai                                                                          |
+| ----------------- | ------------------------------------------------------------------------------ |
+| Domain            | https://m-portofolio.hgteop.easypanel.host                                     |
+| Project / service | `m` / `portofolio`                                                             |
+| Database          | Postgres `m/db` (internal `m_db:5432`, db/user `portofolio`)                   |
+| Cache             | Redis `m/redis` (internal `m_redis:6379`)                                      |
+| Source            | Docker Image `ghcr.io/tooncoderstis/portofolio:latest` (paket GHCR **public**) |
+| Port container    | 3000                                                                           |
+
+> Deploy memakai **pull image** (tanpa build di server). Untuk merilis versi baru: push ke `main` (CI membangun image) lalu **Deploy / Redeploy** service `m/portofolio` di EasyPanel.
+
+## Env produksi (EasyPanel → service `portofolio` → Environment)
+
+Non-rahasia (sudah terpasang): `NODE_ENV`, `APP_VERSION`, `SITE_URL`, `DATABASE_URL`, `REDIS_URL`.
+Rahasia (isi sendiri, jangan commit): `GITHUB_TOKEN`, `GITHUB_USERNAME`, `WAKATIME_API_KEY`, `MONKEYTYPE_USERNAME`, `MONKEYTYPE_API_KEY`, `SNAPSHOT_SECRET`, `HUB_PASSWORD_HASH`, `HUB_SESSION_SECRET`, `HUB_INGEST_SECRET`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. Lihat `.env.production.example`.
+
 ## Prasyarat
 
 - Akun EasyPanel + VPS + domain (DNS mengarah ke VPS).

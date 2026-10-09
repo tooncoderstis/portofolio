@@ -37,3 +37,8 @@ Status terkini: [`STATUS.md`](STATUS.md).
   - Notifikasi: `lib/hub/push.ts` (`web-push` + VAPID), service worker `public/sw.js`, subscribe/unsubscribe, `npm run hub:vapid`; fase yang selesai mengirim inbox + Web Push.
   - Integrasi skill `aasaprojectkit`: template `hub-report.mjs` + langkah pelaporan fase; `docs/hub/project-convention.md`.
   - ADR-0007 (auth owner), ADR-0008 (hub push), ADR-0009 (notifikasi Web Push).
+- Deploy produksi ke EasyPanel: project `m`/service `portofolio` (source Docker Image `ghcr.io/tooncoderstis/portofolio:latest`), Postgres `m/db`, Redis `m/redis`, domain HTTPS `https://m-portofolio.hgteop.easypanel.host`. Diverifikasi `/api/health` 200, halaman publik 200, `/hub` redirect ke `/login`, `/api/hub/*` 401.
+
+### Fixed
+
+- Sinkronisasi `package-lock.json` lintas-platform: menambahkan `@emnapi/core` & `@emnapi/runtime` sebagai devDependency agar `npm ci` berhasil di Linux/CI (dep opsional `sharp`-wasm/`@napi-rs/wasm-runtime` yang di-prune di Windows).

@@ -5,7 +5,7 @@
 > **Jangan simpan kredensial di file ini.**
 
 - **Terakhir diperbarui**: 2026-10-09
-- **Versi produksi aktif**: belum dipasang di EasyPanel; image `ghcr.io/tooncoderstis/portofolio:latest` sudah terbit via CI
+- **Versi produksi aktif**: terpasang di EasyPanel — https://m-portofolio.hgteop.easypanel.host (project `m`, service `portofolio`; db `m/db`, cache `m/redis`; source Docker Image `ghcr.io/tooncoderstis/portofolio:latest`)
 - **Platform**: Next.js (App Router) + TypeScript + Tailwind + shadcn/ui · Postgres + Redis · EasyPanel (Docker image)
 
 ## TL;DR (konteks 30 detik)
@@ -72,7 +72,8 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | Review kategori kompetensi        | "Laravel" saat ini di Frontend; boleh dipindah ke Backend                               |
 | Adapter Umami                     | Menunggu kredensial Umami                                                               |
 | Rotasi token (GitHub & WakaTime)  | Token lama pernah terekspos di disk                                                     |
-| Deploy nyata ke EasyPanel         | Butuh registry + env produksi dari pemilik                                              |
+| Deploy nyata ke EasyPanel         | ✅ https://m-portofolio.hgteop.easypanel.host (project `m`)                             |
+| Env rahasia di EasyPanel          | Isi `GITHUB_*`/`WAKATIME_*`/`MONKEYTYPE_*`/`HUB_*`/`VAPID_*`/`SNAPSHOT_SECRET`          |
 | Dependabot PR (Next 16, dll.)     | Muncul otomatis; bump Next 16 breaking → tinjau manual                                  |
 | `npm audit` (postcss via Next 15) | Tunda; perbaikan butuh Next 16 (breaking) → pertimbangkan ADR baru                      |
 | Env hub di produksi               | Set `HUB_PASSWORD_HASH`/`HUB_SESSION_SECRET`/`HUB_INGEST_SECRET`/`VAPID_*` di EasyPanel |
