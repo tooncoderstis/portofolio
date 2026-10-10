@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Offline" };
 
 export default function OfflinePage() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-6 py-24 text-center">
+    <main className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-4 py-16 text-center sm:px-6 sm:py-24">
       <p className="text-muted-foreground text-sm font-medium">Mode offline</p>
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
         Tidak ada koneksi internet

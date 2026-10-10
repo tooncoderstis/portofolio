@@ -45,7 +45,7 @@ export function ProjectList({ projects }: { projects: Project[] }) {
         ))}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {visible.map((project) => (
           <Card key={project.slug} className="flex h-full flex-col">
             <CardHeader>

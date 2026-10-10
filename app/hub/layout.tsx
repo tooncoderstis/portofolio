@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { LogoutButton } from "@/components/hub/logout-button";
 import { EnableNotifications } from "@/components/hub/enable-notifications";
+import { HubNav } from "@/components/hub/hub-nav";
+import { LogoutButton } from "@/components/hub/logout-button";
 import { getVapidPublicKey } from "@/lib/hub/push";
 import { isOwner } from "@/lib/hub/session";
 
@@ -19,20 +19,10 @@ export default async function HubLayout({ children }: { children: ReactNode }) {
   if (!(await isOwner())) redirect("/login");
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-6 py-10">
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
-        <nav className="flex items-center gap-1">
-          {hubNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-sm transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-3">
+    <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+        <HubNav items={hubNav} />
+        <div className="flex items-center justify-between gap-3 sm:justify-end">
           <EnableNotifications publicKey={getVapidPublicKey()} />
           <LogoutButton />
         </div>

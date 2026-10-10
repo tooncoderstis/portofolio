@@ -123,16 +123,21 @@ export function EnableNotifications({
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <Button
         variant={status === "on" ? "outline" : "default"}
         size="sm"
         onClick={status === "on" ? disable : enable}
         disabled={pending || !publicKey}
       >
-        {status === "on" ? "Matikan notifikasi" : "Aktifkan notifikasi fase"}
+        <span className="sm:hidden">
+          {status === "on" ? "Matikan" : "Notifikasi"}
+        </span>
+        <span className="hidden sm:inline">
+          {status === "on" ? "Matikan notifikasi" : "Aktifkan notifikasi fase"}
+        </span>
       </Button>
-      <span className="text-muted-foreground text-xs">
+      <span className="text-muted-foreground hidden text-xs sm:inline">
         {status === "on" ? "Aktif" : "Nonaktif"}
       </span>
     </div>

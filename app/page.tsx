@@ -20,7 +20,7 @@ export default async function Home() {
   const socials = socialLinks(profile.socials);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-6 py-16">
+    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
       <section className="space-y-6">
         <Reveal>
           <Badge variant="secondary">Dashboard live</Badge>
@@ -61,7 +61,7 @@ export default async function Home() {
         </Reveal>
       </section>
 
-      <section id="dashboard" className="mt-20 space-y-6">
+      <section id="dashboard" className="mt-12 space-y-6 sm:mt-20">
         <Reveal>
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Dashboard</h2>
@@ -72,26 +72,26 @@ export default async function Home() {
           </div>
         </Reveal>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Suspense fallback={<WidgetSkeleton />}>
-            <Reveal>
+            <Reveal className="min-w-0">
               <GithubWidget />
             </Reveal>
           </Suspense>
 
           <Suspense fallback={<WidgetSkeleton />}>
-            <Reveal delay={0.05}>
+            <Reveal className="min-w-0" delay={0.05}>
               <WakatimeWidget />
             </Reveal>
           </Suspense>
 
           <Suspense fallback={<WidgetSkeleton />}>
-            <Reveal delay={0.1}>
+            <Reveal className="min-w-0" delay={0.1}>
               <MonkeytypeWidget />
             </Reveal>
           </Suspense>
 
-          <Reveal delay={0.15}>
+          <Reveal className="min-w-0" delay={0.15}>
             <ComingSoonWidget
               title="Umami Analytics"
               description="Page views dan pengunjung unik"
@@ -101,7 +101,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mt-20 space-y-6">
+      <section className="mt-12 space-y-6 sm:mt-20">
         <Reveal>
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">
@@ -113,9 +113,9 @@ export default async function Home() {
           </div>
         </Reveal>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Suspense fallback={<WidgetSkeleton />}>
-            <Reveal>
+            <Reveal className="min-w-0">
               <TrendWidget
                 source="github"
                 title="Tren kontribusi"
@@ -125,7 +125,7 @@ export default async function Home() {
           </Suspense>
 
           <Suspense fallback={<WidgetSkeleton />}>
-            <Reveal delay={0.05}>
+            <Reveal className="min-w-0" delay={0.05}>
               <TrendWidget
                 source="wakatime"
                 title="Tren waktu coding"

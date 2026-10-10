@@ -35,7 +35,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
   const { frontmatter: data, content } = project;
 
   return (
-    <main className="mx-auto w-full max-w-3xl space-y-8 px-6 py-16">
+    <main className="mx-auto w-full max-w-3xl space-y-8 px-4 py-10 sm:px-6 sm:py-16">
       <div className="space-y-3">
         <Link
           href="/projects"

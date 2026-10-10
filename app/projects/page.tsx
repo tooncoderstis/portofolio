@@ -9,7 +9,7 @@ export default async function ProjectsPage() {
   const projects = await getProjects();
 
   return (
-    <main className="mx-auto w-full max-w-5xl space-y-8 px-6 py-16">
+    <main className="mx-auto w-full max-w-5xl space-y-8 px-4 py-10 sm:px-6 sm:py-16">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Proyek

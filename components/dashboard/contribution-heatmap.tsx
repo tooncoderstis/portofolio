@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 import type { GithubCalendarDay } from "@/lib/adapters/github";
 import { cn } from "@/lib/utils";
 
@@ -18,9 +22,19 @@ export function ContributionHeatmap({
 }: {
   weeks: GithubCalendarDay[][];
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = scrollRef.current;
+
+    if (element) {
+      element.scrollLeft = element.scrollWidth;
+    }
+  }, [weeks]);
+
   return (
-    <div className="overflow-x-auto pb-1">
-      <div className="flex gap-1">
+    <div ref={scrollRef} className="min-w-0 overflow-x-auto pb-1">
+      <div className="flex w-max gap-1">
         {weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="grid grid-rows-7 gap-1">
             {week.map((day) => (
@@ -28,7 +42,7 @@ export function ContributionHeatmap({
                 key={day.date}
                 title={`${day.count} kontribusi pada ${day.date}`}
                 className={cn(
-                  "size-2.5 rounded-[3px]",
+                  "size-2 rounded-[3px] sm:size-2.5",
                   getLevelClass(day.level),
                 )}
               />

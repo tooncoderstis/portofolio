@@ -13,7 +13,7 @@ export default async function LoginPage() {
   if (await isOwner()) redirect("/hub");
 
   return (
-    <main className="mx-auto flex w-full max-w-sm flex-col justify-center px-6 py-24">
+    <main className="mx-auto flex w-full max-w-sm flex-col justify-center px-4 py-16 sm:px-6 sm:py-24">
       <Card>
         <CardHeader>
           <CardTitle>Masuk ke Hub</CardTitle>

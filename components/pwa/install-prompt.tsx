@@ -38,7 +38,7 @@ export function InstallPrompt() {
   }
 
   return (
-    <div className="border-border/60 bg-background fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-md items-center justify-between gap-3 rounded-lg border p-3 shadow-lg sm:right-6 sm:left-auto">
+    <div className="border-border/60 bg-background fixed inset-x-4 bottom-4 z-50 flex items-center justify-between gap-3 rounded-lg border p-3 shadow-lg sm:right-6 sm:left-auto sm:w-full sm:max-w-md">
       <div className="min-w-0">
         <p className="text-sm font-medium">Pasang sebagai aplikasi</p>
         <p className="text-muted-foreground truncate text-xs">

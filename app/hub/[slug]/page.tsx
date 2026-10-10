@@ -79,15 +79,15 @@ export default async function HubProjectPage({
         <ProgressBar value={project.progress} />
       </div>
 
-      <nav className="border-border flex flex-wrap gap-1 border-b">
+      <nav className="border-border flex gap-1 overflow-x-auto border-b">
         {TABS.map((item) => (
           <Link
             key={item.value}
             href={`/hub/${slug}?tab=${item.value}`}
             className={
               item.value === active
-                ? "border-foreground -mb-px border-b-2 px-3 py-2 text-sm font-medium"
-                : "text-muted-foreground hover:text-foreground -mb-px border-b-2 border-transparent px-3 py-2 text-sm"
+                ? "border-foreground -mb-px shrink-0 border-b-2 px-3 py-2 text-sm font-medium whitespace-nowrap"
+                : "text-muted-foreground hover:text-foreground -mb-px shrink-0 border-b-2 border-transparent px-3 py-2 text-sm whitespace-nowrap"
             }
           >
             {item.label}
@@ -126,7 +126,7 @@ export default async function HubProjectPage({
               Belum ada ide pengembangan untuk proyek ini.
             </p>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {ideas.map((idea) => (
                 <IdeaCard
                   key={idea.id}

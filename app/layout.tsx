@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
+import { SiteNav } from "@/components/site-nav";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { getProfile } from "@/lib/content";
 
 import "./globals.css";
@@ -58,27 +58,16 @@ export default async function RootLayout({
         >
           <div className="flex min-h-screen flex-col">
             <header className="border-border/60 bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
-              <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-6 py-4">
-                <Link href="/" className="flex flex-col">
-                  <span className="text-sm font-semibold tracking-tight">
+              <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
+                <Link href="/" className="flex min-w-0 flex-col">
+                  <span className="truncate text-sm font-semibold tracking-tight">
                     {profile.name}
                   </span>
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-muted-foreground truncate text-xs">
                     {profile.role}
                   </span>
                 </Link>
-                <nav className="flex items-center gap-1">
-                  {nav.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-sm transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                  <ThemeToggle />
-                </nav>
+                <SiteNav items={nav} />
               </div>
             </header>
             <div className="flex-1">{children}</div>

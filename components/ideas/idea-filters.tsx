@@ -46,7 +46,7 @@ function FilterRow({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-muted-foreground w-16 shrink-0 text-xs font-medium uppercase">
+      <span className="text-muted-foreground w-full shrink-0 text-xs font-medium uppercase sm:w-16">
         {label}
       </span>
       {options.map((option) => (

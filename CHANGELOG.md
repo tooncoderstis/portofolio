@@ -47,5 +47,6 @@ Status terkini: [`STATUS.md`](STATUS.md).
 
 ### Fixed
 
+- Tampilan mobile dirapikan: grid dashboard/tren memakai `grid-cols-1` (memperbaiki widget GitHub/heatmap yang memaksa halaman lebih lebar dari layar HP); heatmap kontribusi kini scroll di dalam kartu dan default ke tanggal terbaru; header memakai menu hamburger (`SiteNav`), sub-nav hub dapat diskrol horizontal, tombol notifikasi ringkas di mobile, tab detail proyek dapat digeser; padding halaman responsif.
 - Parser `STATUS.md` kini menerima **id fase huruf** (mis. `A`, `B`) selain numerik (`1.1`, `2`), sehingga proyek seperti SigmaLab yang memakai tahap A–H ikut terbaca; pengurutan fase campuran juga diperbaiki.
 - Sinkronisasi `package-lock.json` lintas-platform: menambahkan `@emnapi/core` & `@emnapi/runtime` sebagai devDependency agar `npm ci` berhasil di Linux/CI (dep opsional `sharp`-wasm/`@napi-rs/wasm-runtime` yang di-prune di Windows).

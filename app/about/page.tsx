@@ -13,7 +13,7 @@ export default async function AboutPage() {
   const socials = socialLinks(profile.socials);
 
   return (
-    <main className="mx-auto w-full max-w-3xl space-y-14 px-6 py-16">
+    <main className="mx-auto w-full max-w-3xl space-y-14 px-4 py-10 sm:px-6 sm:py-16">
       <header className="space-y-3">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           {profile.name}
@@ -46,7 +46,7 @@ export default async function AboutPage() {
       {profile.competencies.length > 0 ? (
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold tracking-tight">Kompetensi</h2>
-          <div className="grid gap-8 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             {profile.competencies.map((group) => (
               <div key={group.category} className="space-y-3">
                 <h3 className="text-muted-foreground text-sm font-semibold">
