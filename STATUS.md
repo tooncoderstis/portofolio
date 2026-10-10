@@ -72,6 +72,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 - **Project Hub (FASE 3)**: auth owner (`lib/hub/auth.ts` scrypt + cookie HMAC, `/login`, guard `app/hub/layout.tsx`); skema `hub_project`/`hub_phase`/`hub_decision`/`hub_notification`/`push_subscription` di `lib/hub/store.ts`; ingest `POST /api/hub/ingest` (secret `HUB_INGEST_SECRET`, parser `lib/hub/parse.ts`); UI `/hub`, `/hub/[slug]`, `/hub/notifications` (markdown via `react-markdown`+`remark-gfm`); keputusan fase `POST /api/hub/projects/[slug]/decision`; Web Push (`web-push` + VAPID, `public/sw.js`); skrip `hub:hash`/`hub:register`/`hub:vapid`/`hub:report`. Template pelaporan + langkah DoD ditambahkan ke skill `aasaprojectkit`; konvensi di `docs/hub/project-convention.md`, runbook `docs/runbooks/hub.md`.
 - **PWA (FASE 4.1)**: `app/manifest.ts` (`display: standalone`, ikon 192/512 + maskable), favicon `app/icon.svg` + `app/apple-icon.png`, skrip `npm run icons` (`scripts/generate-icons.ts`, `sharp` devDependency). `public/sw.js`: precache `/offline` + aset, navigasi network-first → `/offline`, aset statis cache-first (revalidasi latar), `/api/**` tidak di-cache, versi cache + cleanup, handler push dipertahankan. `ServiceWorkerRegister` (hanya produksi) + `InstallPrompt` di root layout; `viewport.themeColor` + `appleWebApp`.
 - **Ide & Rencana (FASE 4.2–4.3)**: tabel `hub_idea` (kolom `project` opsional: kosong = inbox media, terisi = rencana proyek) dengan `platform`/`status`/`priority`/`tags`; deteksi platform dari hostname (`lib/ideas/platform.ts`); skema Zod (`lib/hub/schema.ts`); store `listIdeas/getIdea/createIdea/updateIdea/deleteIdea`; API owner-only `/api/hub/ideas` (+ `[id]`); UI `/hub/ideas`, `/hub/ideas/[id]`, dan tab "Rencana" di `/hub/[slug]`; nav hub "Ide". Read-only untuk publik (owner-only).
+- **Deploy FASE 4 (2026-10-10)**: commit `16d632a` di-push ke `main` → CI hijau + image `ghcr.io/tooncoderstis/portofolio:latest` di-publish ulang → service `portofolio` (EasyPanel project `m`) di-deploy. Diverifikasi produksi: `/api/health` 200, `/manifest.webmanifest` 200, `/offline` 200, `/icons/icon-512.png` 200, `sw.js` memuat precache baru, `/api/hub/ideas` 401 (owner guard).
 - Sesi 2026-09-27 diakhiri: dev infra dihentikan (`docker compose down`; volume tetap). Lanjutkan dengan `docker compose up -d` lalu `npm run dev`.
 
 ## Yang belum selesai / menunggu
@@ -90,7 +91,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | Registrasi & lapor proyek         | Jalankan `npm run hub:register`, lalu `hub:report` di tiap proyek                       |
 | Evaluasi manual PWA (4.1)         | Cek `/manifest.webmanifest`, registrasi SW di produksi, halaman `/offline` saat offline |
 | Evaluasi manual Ide & Rencana     | Tambah ide di `/hub/ideas`, kaitkan ke proyek, cek tab "Rencana" di `/hub/[slug]`       |
-| Build & push image versi baru     | Agar PWA + Ide & Rencana aktif di EasyPanel (`build-push.ps1`)                          |
+| Build & push image FASE 4         | ✅ CI publish + deploy EasyPanel; `/manifest.webmanifest` & `/offline` 200 di produksi  |
 
 ## Cara menjalankan & menguji
 
