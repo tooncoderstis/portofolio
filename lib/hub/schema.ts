@@ -35,6 +35,7 @@ export type IngestPayload = z.infer<typeof ingestPayloadSchema>;
 
 export const registerPayloadSchema = z.object({
   projects: z.array(hubProjectSchema).max(200),
+  prune: z.boolean().optional(),
 });
 export type RegisterPayload = z.infer<typeof registerPayloadSchema>;
 

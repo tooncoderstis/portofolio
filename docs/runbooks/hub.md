@@ -25,7 +25,15 @@ Dari repo portofolio (folder `E:\aasatech`), jalankan:
 npm run hub:register
 ```
 
-Opsional: `HUB_PROJECTS_ROOT`, `HUB_IGNORE_PROJECTS` (daftar nama folder yang dilewati, dipisah koma).
+- Script memindai folder, membaca `.env` tiap proyek untuk `HUB_PROJECT_SLUG`/`HUB_PROJECT_NAME` (fallback: nama folder), lalu mengirim ke `POST /api/hub/register`.
+- Opsional: `HUB_PROJECTS_ROOT`, `HUB_IGNORE_PROJECTS` (daftar nama/slug folder yang dilewati, dipisah koma).
+- **Prune (hapus proyek yang foldernya sudah tidak ada):**
+
+  ```sh
+  npm run hub:register -- --prune   # atau HUB_PRUNE=1 npm run hub:register
+  ```
+
+  Prune menghapus `hub_project` (beserta fase/keputusan/notifikasi) yang tidak ada di daftar folder. Guardrail: prune tidak aktif secara default dan script menolak jalan bila daftar folder kosong.
 
 ## 3. Menghubungkan proyek lain
 

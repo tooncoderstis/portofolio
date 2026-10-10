@@ -3,13 +3,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
+import { ProgressBar } from "@/components/hub/progress-bar";
 import { mdxComponents } from "@/components/mdx/mdx-components";
 import { StatusBadge } from "@/components/projects/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getProject, getProjectSlugs } from "@/lib/content";
+import { getProject as getHubProject } from "@/lib/hub/store";
 
 type RouteProps = { params: Promise<{ slug: string }> };
+
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   return getProjectSlugs().map((slug) => ({ slug }));
@@ -33,6 +37,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
   if (!project) notFound();
 
   const { frontmatter: data, content } = project;
+  const hub = await getHubProject(slug);
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-8 px-4 py-10 sm:px-6 sm:py-16">
@@ -79,6 +84,17 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
             </Button>
           ) : null}
         </div>
+        {hub ? (
+          <div className="space-y-2 pt-2">
+            <div className="text-muted-foreground flex items-center justify-between text-xs">
+              <span>
+                Progres pengembangan ({hub.done}/{hub.total} fase)
+              </span>
+              <span className="tabular-nums">{hub.progress}%</span>
+            </div>
+            <ProgressBar value={hub.progress} />
+          </div>
+        ) : null}
       </div>
 
       <article>

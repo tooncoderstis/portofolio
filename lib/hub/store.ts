@@ -220,6 +220,44 @@ export async function upsertProject(input: {
   }, undefined);
 }
 
+export async function pruneMissingProjects(
+  keepSlugs: string[],
+): Promise<string[]> {
+  if (keepSlugs.length === 0) return [];
+
+  return withSchema(async (client) => {
+    const { rows } = await client.query<{ slug: string }>(
+      `SELECT slug FROM hub_project WHERE NOT (slug = ANY($1::text[]))`,
+      [keepSlugs],
+    );
+    const slugs = rows.map((row) => row.slug);
+
+    if (slugs.length === 0) return [];
+
+    await client.query(
+      `DELETE FROM hub_phase WHERE project = ANY($1::text[])`,
+      [slugs],
+    );
+    await client.query(
+      `DELETE FROM hub_decision WHERE project = ANY($1::text[])`,
+      [slugs],
+    );
+    await client.query(
+      `DELETE FROM hub_notification WHERE project = ANY($1::text[])`,
+      [slugs],
+    );
+    await client.query(
+      `UPDATE hub_idea SET project = NULL WHERE project = ANY($1::text[])`,
+      [slugs],
+    );
+    await client.query(`DELETE FROM hub_project WHERE slug = ANY($1::text[])`, [
+      slugs,
+    ]);
+
+    return slugs;
+  }, []);
+}
+
 async function readPhases(client: Client, project: string) {
   const { rows } = await client.query<{
     phase_id: string;

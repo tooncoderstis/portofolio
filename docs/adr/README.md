@@ -18,6 +18,7 @@ Kumpulan keputusan arsitektur proyek **Portofolio**, mengikuti format [Nygard](h
 | [0010](0010-pwa.md)                           | PWA: manifest + service worker dengan fallback offline        | Diterima                                                      | 2026-10-10 |
 | [0011](0011-idea-inbox-development-plan.md)   | Inbox ide media & rencana pengembangan proyek (`hub_idea`)    | Diterima                                                      | 2026-10-10 |
 | [0012](0012-notifikasi-fase-mulai-selesai.md) | Notifikasi transisi fase mulai & selesai (menggantikan 0009)  | Diterima                                                      | 2026-10-10 |
+| [0013](0013-hub-prune-dan-sinkron-proyek.md)  | Prune proyek hub & sinkron progres ke halaman Proyek publik   | Diterima                                                      | 2026-10-10 |
 
 ## Cara menambah ADR
 

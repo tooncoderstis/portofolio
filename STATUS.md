@@ -64,7 +64,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 - **Konten**: `lib/content.ts` (gray-matter + Zod) memvalidasi `content/profile.mdx` dan `content/projects/*.mdx` (schema ketat; slug file ↔ frontmatter divalidasi). Render MDX via `next-mdx-remote/rsc` + komponen styling di `components/mdx/`.
 - **Halaman**: `/` (hero + dashboard, `force-dynamic`), `/about` (bio, kompetensi, pengalaman), `/projects` (filter status client-side), `/projects/[slug]` (SSG via `generateStaticParams`, 404 untuk slug tak dikenal). Navigasi di header.
 - **Snapshot & tren**: `lib/snapshot.ts` (`snapshotAll` → `refreshStats` paksa fetch + upsert), `POST/GET /api/snapshot` (dilindungi `SNAPSHOT_SECRET`; 401 tanpa secret di produksi), `lib/trends.ts` (+ `extractMetric`), `GET /api/trends/[source]?days=30`, dan widget `TrendWidget`/`TrendChart` di beranda.
-- Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **127 test** · `build` ✅. Live: snapshot 401 tanpa secret; dengan secret → github/wakatime/monkeytype `ok`, umami `skipped`; 3 baris `snapshot` di Postgres; `/api/trends/github` mengembalikan poin; beranda memuat seksi "Tren (30 hari)".
+- Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **134 test** · `build` ✅. Live: snapshot 401 tanpa secret; dengan secret → github/wakatime/monkeytype `ok`, umami `skipped`; 3 baris `snapshot` di Postgres; `/api/trends/github` mengembalikan poin; beranda memuat seksi "Tren (30 hari)".
 - **Home dinamis**: `export const dynamic = "force-dynamic"` agar data dashboard tidak ter-bake saat build; cache tetap dikelola Redis. `next.config.ts` memakai `outputFileTracingIncludes` agar `content/**` ikut ke image standalone.
 - Repo publik: **https://github.com/tooncoderstis/portofolio** (branch `main`), CI hijau (lint, typecheck, test, build, gitleaks).
 - CI juga **membangun & mempublikasikan image** ke `ghcr.io/tooncoderstis/portofolio` (workflow `docker-publish`, tag `latest`/`main`/`sha` + semver saat tag).
@@ -76,6 +76,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 - **Notifikasi transisi fase (ADR-0012)**: `diffPhaseTransitions` (`lib/hub/parse.ts`) membandingkan status lama vs baru; `runIngest` memicu inbox + Web Push untuk `→ in_progress` (mulai) dan `→ done` (selesai) saja; laporan pertama/fase baru senyap. Konvensi report diubah: tandai 🔄 + `hub:report` saat mulai, tandai ✅ + `hub:report` saat selesai (skill `aasaprojectkit` + instruksi global `hub-report.md`).
 - **Responsif mobile (commit `2d7f7b3`)**: grid dashboard/tren `grid-cols-1` + `min-w-0` (memperbaiki widget GitHub/heatmap yang melebarkan halaman di HP), heatmap kontribusi default scroll ke tanggal terbaru, header hamburger (`SiteNav`), sub-nav hub scrollable, tab detail proyek scrollable. Di-deploy ke EasyPanel.
 - **Hub multi-proyek (2026-10-10)**: `hub:register` mendaftarkan ckphelper, klinik, opendots, portofolio, sigmalab, simdasikcda (kecuali `materi sigmalab`). Laporan fase: portofolio (22), sigmalab (9), ckphelper (8), klinik (3), opendots (3). klinik & OpenDots disiapkan pelaporannya (reporter `scripts/hub-report.mjs` + skrip npm + `.env` HUB_* + `STATUS.md` starter).
+- **Prune & sinkron proyek (ADR-0013)**: `POST /api/hub/register` + `pruneMissingProjects` menghapus proyek hub yang foldernya sudah tidak ada; `hub:register` membaca `.env` tiap proyek (slug/nama) & mendukung `--prune`/`HUB_PRUNE` (guardrail: tolak daftar kosong). Slug `klinik` → `klinix` (kanonik). Halaman publik `/projects` & `/projects/[slug]` (`force-dynamic`) menampilkan progres fase dari hub untuk proyek ber-MDX (`lib/projects-sync.ts`).
 - Sesi 2026-09-27 diakhiri: dev infra dihentikan (`docker compose down`; volume tetap). Lanjutkan dengan `docker compose up -d` lalu `npm run dev`.
 
 ## Yang belum selesai / menunggu
@@ -101,6 +102,7 @@ npm run stats:check      # verifikasi live 3 sumber (butuh .env)
 npm run hub:hash         # buat HUB_PASSWORD_HASH + HUB_SESSION_SECRET
 npm run hub:vapid        # buat kunci VAPID untuk Web Push
 npm run hub:register     # daftarkan folder E:\aasatech ke hub
+npm run hub:register -- --prune   # daftarkan + hapus proyek yang foldernya hilang
 npm run hub:report       # lapor STATUS.md/PRD.md proyek ini ke hub
 npm run icons            # buat ulang ikon PWA (public/icons + app/apple-icon.png)
 npm run lint

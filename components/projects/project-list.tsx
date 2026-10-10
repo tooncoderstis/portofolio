@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { ProgressBar } from "@/components/hub/progress-bar";
 import { StatusBadge } from "@/components/projects/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { Project } from "@/lib/content";
+import type { ProjectProgress } from "@/lib/projects-sync";
 
 const FILTERS = [
   { value: "all", label: "Semua" },
@@ -24,7 +26,13 @@ const FILTERS = [
 
 type FilterValue = (typeof FILTERS)[number]["value"];
 
-export function ProjectList({ projects }: { projects: Project[] }) {
+export function ProjectList({
+  projects,
+  progress,
+}: {
+  projects: Project[];
+  progress?: Record<string, ProjectProgress>;
+}) {
   const [filter, setFilter] = useState<FilterValue>("all");
   const visible = projects.filter(
     (project) => filter === "all" || project.status === filter,
@@ -46,61 +54,76 @@ export function ProjectList({ projects }: { projects: Project[] }) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {visible.map((project) => (
-          <Card key={project.slug} className="flex h-full flex-col">
-            <CardHeader>
-              <div className="flex items-start justify-between gap-3">
-                <CardTitle>
-                  <Link
-                    href={`/projects/${project.slug}`}
-                    className="hover:underline"
+        {visible.map((project) => {
+          const item = progress?.[project.slug];
+
+          return (
+            <Card key={project.slug} className="flex h-full flex-col">
+              <CardHeader>
+                <div className="flex items-start justify-between gap-3">
+                  <CardTitle>
+                    <Link
+                      href={`/projects/${project.slug}`}
+                      className="hover:underline"
+                    >
+                      {project.title}
+                    </Link>
+                  </CardTitle>
+                  <StatusBadge status={project.status} />
+                </div>
+                <CardDescription>{project.summary}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-1 space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {project.stack.map((tech) => (
+                    <Badge key={tech} variant="secondary">
+                      {tech}
+                    </Badge>
+                  ))}
+                </div>
+                {item ? (
+                  <div className="space-y-1.5">
+                    <div className="text-muted-foreground flex items-center justify-between text-xs">
+                      <span>
+                        {item.done}/{item.total} fase
+                      </span>
+                      <span className="tabular-nums">{item.progress}%</span>
+                    </div>
+                    <ProgressBar value={item.progress} />
+                  </div>
+                ) : null}
+              </CardContent>
+              <CardFooter className="flex gap-4 text-sm">
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className="font-medium underline underline-offset-4"
+                >
+                  Detail
+                </Link>
+                {project.repoUrl ? (
+                  <a
+                    href={project.repoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-muted-foreground hover:underline"
                   >
-                    {project.title}
-                  </Link>
-                </CardTitle>
-                <StatusBadge status={project.status} />
-              </div>
-              <CardDescription>{project.summary}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <div className="flex flex-wrap gap-2">
-                {project.stack.map((tech) => (
-                  <Badge key={tech} variant="secondary">
-                    {tech}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter className="flex gap-4 text-sm">
-              <Link
-                href={`/projects/${project.slug}`}
-                className="font-medium underline underline-offset-4"
-              >
-                Detail
-              </Link>
-              {project.repoUrl ? (
-                <a
-                  href={project.repoUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-muted-foreground hover:underline"
-                >
-                  Repo
-                </a>
-              ) : null}
-              {project.liveUrl ? (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-muted-foreground hover:underline"
-                >
-                  Live
-                </a>
-              ) : null}
-            </CardFooter>
-          </Card>
-        ))}
+                    Repo
+                  </a>
+                ) : null}
+                {project.liveUrl ? (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-muted-foreground hover:underline"
+                  >
+                    Live
+                  </a>
+                ) : null}
+              </CardFooter>
+            </Card>
+          );
+        })}
       </div>
 
       {visible.length === 0 ? (

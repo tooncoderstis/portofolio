@@ -2,11 +2,19 @@ import type { Metadata } from "next";
 
 import { ProjectList } from "@/components/projects/project-list";
 import { getProjects } from "@/lib/content";
+import { listProjects } from "@/lib/hub/store";
+import { buildProgressMap } from "@/lib/projects-sync";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = { title: "Proyek" };
 
 export default async function ProjectsPage() {
-  const projects = await getProjects();
+  const [projects, hubProjects] = await Promise.all([
+    getProjects(),
+    listProjects(),
+  ]);
+  const progress = buildProgressMap(hubProjects);
 
   return (
     <main className="mx-auto w-full max-w-5xl space-y-8 px-4 py-10 sm:px-6 sm:py-16">
@@ -19,7 +27,10 @@ export default async function ProjectsPage() {
         </p>
       </header>
 
-      <ProjectList projects={projects.map((entry) => entry.frontmatter)} />
+      <ProjectList
+        projects={projects.map((entry) => entry.frontmatter)}
+        progress={progress}
+      />
     </main>
   );
 }
