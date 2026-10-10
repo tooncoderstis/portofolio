@@ -10,7 +10,7 @@
 
 ## TL;DR (konteks 30 detik)
 
-Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **FASE 1: 1.1–1.6 selesai. Dashboard live, halaman `/about` & `/projects`, dan grafik tren dari snapshot harian semua jalan. Sisa FASE 1: adapter Umami (butuh kredensial). FASE 3: Project Hub owner-only sudah terimplementasi (login, progres proyek, keputusan fase, notifikasi Web Push). FASE 4: PWA (manifest + service worker + fallback offline) dan halaman Ide + tab Rencana pengembangan di hub sudah terimplementasi. Hub kini multi-proyek (ckphelper, sigmalab, klinik, opendots, portofolio, simdasikcda) dan tampilan sudah responsif untuk mobile.**
+Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **FASE 1: 1.1–1.6 selesai. Dashboard live, halaman `/about` & `/projects`, dan grafik tren dari snapshot harian semua jalan. Sisa FASE 1: adapter Umami (butuh kredensial). FASE 3: Project Hub owner-only sudah terimplementasi (login, progres proyek, keputusan fase, notifikasi Web Push). FASE 4: PWA (manifest + service worker + fallback offline) dan halaman Ide + tab Rencana pengembangan di hub sudah terimplementasi. Hub multi-proyek (ckphelper, klinix, portofolio, sigmalab, simdasikcda) tersinkron dengan halaman `/projects` (5 proyek) dan tampilan sudah responsif untuk mobile.**
 
 > ⚠️ **Catatan keamanan**: `.env` sementara memakai token GitHub/WakaTime lama yang pernah terekspos di disk. **Rotasi token** sebelum push/deploy.
 >
@@ -77,6 +77,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 - **Responsif mobile (commit `2d7f7b3`)**: grid dashboard/tren `grid-cols-1` + `min-w-0` (memperbaiki widget GitHub/heatmap yang melebarkan halaman di HP), heatmap kontribusi default scroll ke tanggal terbaru, header hamburger (`SiteNav`), sub-nav hub scrollable, tab detail proyek scrollable. Di-deploy ke EasyPanel.
 - **Hub multi-proyek (2026-10-10)**: `hub:register` mendaftarkan ckphelper, klinik, opendots, portofolio, sigmalab, simdasikcda (kecuali `materi sigmalab`). Laporan fase: portofolio (22), sigmalab (9), ckphelper (8), klinik (3), opendots (3). klinik & OpenDots disiapkan pelaporannya (reporter `scripts/hub-report.mjs` + skrip npm + `.env` HUB_* + `STATUS.md` starter).
 - **Prune & sinkron proyek (ADR-0013)**: `POST /api/hub/register` + `pruneMissingProjects` menghapus proyek hub yang foldernya sudah tidak ada; `hub:register` membaca `.env` tiap proyek (slug/nama) & mendukung `--prune`/`HUB_PRUNE` (guardrail: tolak daftar kosong). Slug `klinik` → `klinix` (kanonik). Halaman publik `/projects` & `/projects/[slug]` (`force-dynamic`) menampilkan progres fase dari hub untuk proyek ber-MDX (`lib/projects-sync.ts`).
+- **Proyek publik sinkron (2026-10-10)**: MDX `content/projects/ckphelper.mdx` & `simdasikcda.mdx` ditambahkan → `/projects` = `/hub` = **5 proyek** (ckphelper, klinix, portofolio, sigmalab, simdasikcda) + progres fase. `OpenDots` (template upstream) dikecualikan via `HUB_IGNORE_PROJECTS` & setup pelaporannya dibersihkan.
 - Sesi 2026-09-27 diakhiri: dev infra dihentikan (`docker compose down`; volume tetap). Lanjutkan dengan `docker compose up -d` lalu `npm run dev`.
 
 ## Yang belum selesai / menunggu
@@ -89,7 +90,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | Dependabot PR (Next 16, dll.)     | Muncul otomatis; bump Next 16 breaking → tinjau manual                              |
 | `npm audit` (postcss via Next 15) | Tunda; perbaikan butuh Next 16 (breaking) → pertimbangkan ADR baru                  |
 | Evaluasi manual PWA & Ide/Rencana | Cek manifest/SW/offline di produksi; tambah ide & kaitkan ke proyek di `/hub/ideas` |
-| STATUS.md starter klinik/OpenDots | Fase masih placeholder; perbarui saat proyeknya dikerjakan                          |
+| STATUS.md starter klinik          | Fase masih placeholder; perbarui saat proyeknya dikerjakan                          |
 | Lapor `simdasikcda`               | Terdaftar di hub; belum ada reporter/`STATUS.md`                                    |
 
 ## Cara menjalankan & menguji

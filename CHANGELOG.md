@@ -43,6 +43,7 @@ Status terkini: [`STATUS.md`](STATUS.md).
 
 - Hub multi-proyek: `hub:register` mendaftarkan 6 proyek `E:\aasatech` (ckphelper, klinik, opendots, portofolio, sigmalab, simdasikcda; kecuali `materi sigmalab`) dan laporan fase dijalankan (portofolio 22, sigmalab 9, ckphelper 8, klinik 3, opendots 3). Pelaporan disiapkan untuk klinik & OpenDots (`scripts/hub-report.mjs` + skrip npm `hub:report` + `.env` HUB_* + `STATUS.md` starter). Runbook `docs/runbooks/hub.md` diselaraskan dengan alur dua momen (ADR-0012).
 - Prune proyek hub & sinkron progres: `POST /api/hub/register` + `pruneMissingProjects` menghapus proyek hub yang sudah tidak ada foldernya; `scripts/hub-register.ts` membaca `.env` tiap proyek (slug/nama) dan mendukung `npm run hub:register -- --prune` (guardrail: tidak default, tolak daftar kosong). Halaman publik `/projects` & `/projects/[slug]` kini `force-dynamic` dan menampilkan progres fase dari hub untuk proyek ber-MDX (`lib/projects-sync.ts`); slug kanonik `klinix` disamakan. ADR-0013.
+- Proyek publik disinkronkan dengan hub: tambah MDX `content/projects/ckphelper.mdx` & `content/projects/simdasikcda.mdx` sehingga `/projects` = `/hub` = 5 proyek (ckphelper, klinix, portofolio, sigmalab, simdasikcda). `OpenDots` (template upstream, bukan proyek pemilik) dikecualikan via `HUB_IGNORE_PROJECTS` dan setup pelaporannya dibersihkan.
 
 ### Changed
 

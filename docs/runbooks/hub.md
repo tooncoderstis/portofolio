@@ -26,7 +26,7 @@ npm run hub:register
 ```
 
 - Script memindai folder, membaca `.env` tiap proyek untuk `HUB_PROJECT_SLUG`/`HUB_PROJECT_NAME` (fallback: nama folder), lalu mengirim ke `POST /api/hub/register`.
-- Opsional: `HUB_PROJECTS_ROOT`, `HUB_IGNORE_PROJECTS` (daftar nama/slug folder yang dilewati, dipisah koma).
+- Opsional: `HUB_PROJECTS_ROOT`, `HUB_IGNORE_PROJECTS` (daftar nama/slug folder yang dilewati, dipisah koma). Contoh: `HUB_IGNORE_PROJECTS=materi sigmalab,OpenDots` agar folder non-proyek/template tidak terdaftar (dan ikut ter-prune bila ada).
 - **Prune (hapus proyek yang foldernya sudah tidak ada):**
 
   ```sh

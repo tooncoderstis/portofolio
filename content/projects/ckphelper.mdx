@@ -1,0 +1,35 @@
+---
+title: "CKP Helper"
+slug: "ckphelper"
+status: "completed"
+summary: "PWA generator Capaian Kinerja Perhari (CKP) berbasis LLM: foto + konteks menjadi baris CKP, lalu diekspor ke Excel."
+stack:
+  - "Node.js"
+  - "Fastify"
+  - "Prisma"
+  - "PostgreSQL"
+  - "React"
+  - "Vite"
+  - "TypeScript"
+  - "Tailwind CSS"
+  - "Docker"
+repoUrl: "https://github.com/tooncoderstis/ckphelper"
+liveUrl: "https://m-ckphelper.hgteop.easypanel.host"
+---
+
+## Ringkasan
+
+CKP Helper mempermudah pembuatan **Capaian Kinerja Perhari (CKP)**: ambil beberapa foto bukti + konteks opsional, lalu LLM menghasilkan satu baris CKP yang mengikuti template resmi, dan diekspor menjadi `.xlsx` untuk pelaporan bulanan.
+
+## Fitur
+
+- Multi-user: register, login, dan profil kepegawaian.
+- Katalog **Rencana Kinerja** per pengguna sebagai konteks agar hasil LLM konsisten.
+- Laporan = beberapa foto + konteks → baris CKP (rancangan, dapat diedit).
+- Tabel laporan + halaman detail dengan galeri foto.
+- **Share-link** publik read-only per laporan.
+- **Export Excel** bulanan sesuai template resmi.
+
+## Stack & deploy
+
+Backend Node.js + Fastify + Prisma (PostgreSQL); frontend React + Vite + TypeScript + Tailwind sebagai PWA. Satu image Docker, dideploy di EasyPanel.
