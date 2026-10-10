@@ -1,6 +1,6 @@
 # Runbook: Project Hub (owner-only)
 
-Hub menampilkan progres semua proyek yang melapor. Proyek **mendorong** laporannya; hub tidak membaca filesystem atau polling. Lihat ADR-0007/0008/0009 dan [`docs/hub/project-convention.md`](../hub/project-convention.md).
+Hub menampilkan progres semua proyek yang melapor. Proyek **mendorong** laporannya; hub tidak membaca filesystem atau polling. Lihat ADR-0007/0008/0012 dan [`docs/hub/project-convention.md`](../hub/project-convention.md).
 
 ## 1. Konfigurasi server (portofolio)
 
@@ -40,13 +40,13 @@ Untuk setiap proyek yang mau melapor:
    HUB_PROJECT_SLUG=<slug>
    HUB_PROJECT_NAME=<nama>
    ```
-4. Pastikan `STATUS.md` memakai id fase numerik + emoji status (lihat konvensi).
+4. Pastikan `STATUS.md` memakai id fase numerik/huruf + emoji status (lihat konvensi).
 
 ## 4. Alur harian
 
-- Selesaikan satu fase, perbarui `STATUS.md`.
-- Jalankan `npm run hub:report` di proyek (langkah DoD).
-- Hub mendeteksi fase yang berubah ke selesai → mengirim **inbox** + **Web Push** ke perangkat owner.
+- **Mulai fase**: tandai baris fase di `STATUS.md` menjadi 🔄 (dikerjakan), lalu `npm run hub:report` (hub mengubah status jadi _dikerjakan_ + notifikasi).
+- **Fase selesai**: tandai ✅ (selesai), lalu `npm run hub:report` lagi (hub mengubah status jadi _selesai_ + notifikasi).
+- Hub mendeteksi perubahan status fase (→ 🔄 atau ✅) → mengirim **inbox** + **Web Push** ke perangkat owner. Laporan pertama hanya menyinkronkan; reopen/pause tidak memicu notifikasi.
 
 ## 5. Verifikasi
 
