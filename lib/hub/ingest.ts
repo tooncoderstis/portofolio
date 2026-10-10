@@ -13,6 +13,7 @@ import {
 export type IngestResult = {
   project: string;
   phaseCount: number;
+  started: PhaseTransition[];
   completed: PhaseTransition[];
 };
 
@@ -32,8 +33,26 @@ export async function runIngest(payload: IngestPayload): Promise<IngestResult> {
   });
 
   const transitions = await applyPhases(project.slug, phases);
+  const started = transitions.filter((item) => item.to === "in_progress");
+  const completed = transitions.filter((item) => item.to === "done");
 
-  for (const transition of transitions) {
+  for (const transition of started) {
+    await createNotification({
+      project: project.slug,
+      phaseId: transition.phaseId,
+      type: "phase_started",
+      title: `Fase ${transition.phaseId} mulai dikerjakan — ${project.name}`,
+      body: transition.title,
+    });
+
+    await sendPushToAll({
+      title: `Fase ${transition.phaseId} mulai dikerjakan`,
+      body: `${project.name} — ${transition.title}`,
+      url: `/hub/${project.slug}`,
+    });
+  }
+
+  for (const transition of completed) {
     await createNotification({
       project: project.slug,
       phaseId: transition.phaseId,
@@ -52,6 +71,7 @@ export async function runIngest(payload: IngestPayload): Promise<IngestResult> {
   return {
     project: project.slug,
     phaseCount: phases.length,
-    completed: transitions,
+    started,
+    completed,
   };
 }

@@ -47,7 +47,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | 3.2 | Skema hub + API ingest + registrasi proyek                     | ✅     |
 | 3.3 | UI Hub (daftar, detail, STATUS.md/PRD.md, markdown)            | ✅     |
 | 3.4 | Keputusan lanjut/tidak (catatan, tanpa eksekusi)               | ✅     |
-| 3.5 | Notifikasi fase selesai (inbox + Web Push)                     | ✅     |
+| 3.5 | Notifikasi fase mulai & selesai (inbox + Web Push)             | ✅     |
 | 3.6 | Integrasi skill `aasaprojectkit` + CLI lapor + konvensi        | ✅     |
 | 3.7 | ADR, PRD, STATUS, CHANGELOG, runbook                           | ✅     |
 
@@ -73,6 +73,7 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 - **PWA (FASE 4.1)**: `app/manifest.ts` (`display: standalone`, ikon 192/512 + maskable), favicon `app/icon.svg` + `app/apple-icon.png`, skrip `npm run icons` (`scripts/generate-icons.ts`, `sharp` devDependency). `public/sw.js`: precache `/offline` + aset, navigasi network-first → `/offline`, aset statis cache-first (revalidasi latar), `/api/**` tidak di-cache, versi cache + cleanup, handler push dipertahankan. `ServiceWorkerRegister` (hanya produksi) + `InstallPrompt` di root layout; `viewport.themeColor` + `appleWebApp`.
 - **Ide & Rencana (FASE 4.2–4.3)**: tabel `hub_idea` (kolom `project` opsional: kosong = inbox media, terisi = rencana proyek) dengan `platform`/`status`/`priority`/`tags`; deteksi platform dari hostname (`lib/ideas/platform.ts`); skema Zod (`lib/hub/schema.ts`); store `listIdeas/getIdea/createIdea/updateIdea/deleteIdea`; API owner-only `/api/hub/ideas` (+ `[id]`); UI `/hub/ideas`, `/hub/ideas/[id]`, dan tab "Rencana" di `/hub/[slug]`; nav hub "Ide". Read-only untuk publik (owner-only).
 - **Deploy FASE 4 (2026-10-10)**: commit `16d632a` di-push ke `main` → CI hijau + image `ghcr.io/tooncoderstis/portofolio:latest` di-publish ulang → service `portofolio` (EasyPanel project `m`) di-deploy. Diverifikasi produksi: `/api/health` 200, `/manifest.webmanifest` 200, `/offline` 200, `/icons/icon-512.png` 200, `sw.js` memuat precache baru, `/api/hub/ideas` 401 (owner guard).
+- **Notifikasi transisi fase (ADR-0012)**: `diffPhaseTransitions` (`lib/hub/parse.ts`) membandingkan status lama vs baru; `runIngest` memicu inbox + Web Push untuk `→ in_progress` (mulai) dan `→ done` (selesai) saja; laporan pertama/fase baru senyap. Konvensi report diubah: tandai 🔄 + `hub:report` saat mulai, tandai ✅ + `hub:report` saat selesai (skill `aasaprojectkit` + instruksi global `hub-report.md`).
 - Sesi 2026-09-27 diakhiri: dev infra dihentikan (`docker compose down`; volume tetap). Lanjutkan dengan `docker compose up -d` lalu `npm run dev`.
 
 ## Yang belum selesai / menunggu

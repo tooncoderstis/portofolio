@@ -31,6 +31,7 @@ beforeEach(() => {
   mocks.runIngest.mockResolvedValue({
     project: "portofolio",
     phaseCount: 1,
+    started: [],
     completed: [],
   });
   mocks.env.HUB_INGEST_SECRET = undefined;

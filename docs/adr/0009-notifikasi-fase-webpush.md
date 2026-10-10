@@ -1,6 +1,6 @@
 # ADR-0009: Notifikasi penyelesaian fase via Web Push + inbox
 
-- **Status**: Diterima
+- **Status**: Digantikan oleh ADR-0012
 - **Tanggal**: 2026-10-09
 
 ## Konteks

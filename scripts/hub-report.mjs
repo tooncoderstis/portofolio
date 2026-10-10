@@ -110,14 +110,29 @@ async function main() {
     return;
   }
 
+  const started = body.started ?? [];
   const completed = body.completed ?? [];
+  const parts = [];
+
+  if (started.length > 0) {
+    parts.push(
+      `${started.length} mulai dikerjakan (${started
+        .map((item) => item.phaseId)
+        .join(", ")})`,
+    );
+  }
+
+  if (completed.length > 0) {
+    parts.push(
+      `${completed.length} selesai (${completed
+        .map((item) => item.phaseId)
+        .join(", ")})`,
+    );
+  }
+
   console.log(
     `OK  ${slug}: ${body.phaseCount ?? 0} fase terbaca` +
-      (completed.length > 0
-        ? `, ${completed.length} baru selesai (${completed
-            .map((item) => item.phaseId)
-            .join(", ")})`
-        : ""),
+      (parts.length > 0 ? `, ${parts.join(", ")}` : ""),
   );
 }
 

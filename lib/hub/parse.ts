@@ -64,6 +64,38 @@ export function parseStatusPhases(markdown: string): IngestPhase[] {
   return phases;
 }
 
+export type PhaseTransitionInfo = {
+  phaseId: string;
+  title: string;
+  from: PhaseStatus;
+  to: PhaseStatus;
+};
+
+export function diffPhaseTransitions(
+  previous: { phaseId: string; title: string; status: PhaseStatus }[],
+  next: IngestPhase[],
+): PhaseTransitionInfo[] {
+  const before = new Map(
+    previous.map((phase) => [phase.phaseId, phase.status]),
+  );
+  const transitions: PhaseTransitionInfo[] = [];
+
+  for (const phase of next) {
+    const from = before.get(phase.id);
+
+    if (!from || from === phase.status) continue;
+
+    transitions.push({
+      phaseId: phase.id,
+      title: phase.title,
+      from,
+      to: phase.status,
+    });
+  }
+
+  return transitions;
+}
+
 export function comparePhaseIds(a: string, b: string): number {
   const left = a.split(".");
   const right = b.split(".");

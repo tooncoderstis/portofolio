@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { comparePhaseIds, parseStatusPhases } from "./parse";
+import {
+  comparePhaseIds,
+  diffPhaseTransitions,
+  parseStatusPhases,
+} from "./parse";
 
 const SAMPLE = `# STATUS
 
@@ -57,6 +61,35 @@ describe("parseStatusPhases", () => {
     expect(parseStatusPhases(raw)).toEqual([
       { id: "1", title: "A", status: "done" },
     ]);
+  });
+});
+
+describe("diffPhaseTransitions", () => {
+  const previous = [
+    { phaseId: "1.1", title: "Fondasi", status: "done" as const },
+    { phaseId: "1.2", title: "Adapter", status: "in_progress" as const },
+    { phaseId: "1.3", title: "API", status: "todo" as const },
+  ];
+
+  it("mendeteksi perubahan status beserta status asal", () => {
+    const transitions = diffPhaseTransitions(previous, [
+      { id: "1.2", title: "Adapter", status: "done" },
+      { id: "1.3", title: "API", status: "in_progress" },
+    ]);
+
+    expect(transitions).toEqual([
+      { phaseId: "1.2", title: "Adapter", from: "in_progress", to: "done" },
+      { phaseId: "1.3", title: "API", from: "todo", to: "in_progress" },
+    ]);
+  });
+
+  it("mengabaikan fase baru dan status yang tidak berubah", () => {
+    const transitions = diffPhaseTransitions(previous, [
+      { id: "1.1", title: "Fondasi", status: "done" },
+      { id: "2.0", title: "Baru", status: "in_progress" },
+    ]);
+
+    expect(transitions).toEqual([]);
   });
 });
 

@@ -41,6 +41,10 @@ Status terkini: [`STATUS.md`](STATUS.md).
 - FASE 4 — PWA: `app/manifest.ts` (`display: standalone`, ikon 192/512 + maskable), favicon `app/icon.svg` + `app/apple-icon.png`, skrip `npm run icons` (`scripts/generate-icons.ts` dengan `sharp`), `public/sw.js` diperluas (precache `/offline` + aset, navigasi network-first → `/offline`, aset statis cache-first, versi cache + cleanup, handler push dipertahankan), halaman `/offline`, komponen `ServiceWorkerRegister` (produksi) & `InstallPrompt` (`beforeinstallprompt`), serta `viewport.themeColor` + `appleWebApp` di layout.
 - FASE 4 — Ide & rencana pengembangan: tabel `hub_idea` (ide umum dari media + rencana per proyek via kolom `project` opsional) dengan `status`/`priority`/`tags`; deteksi platform dari hostname (`lib/ideas/platform.ts`); skema Zod (`lib/hub/schema.ts`), store `listIdeas/getIdea/createIdea/updateIdea/deleteIdea` (`lib/hub/store.ts`); API owner-only `GET/POST /api/hub/ideas` + `GET/PATCH/DELETE /api/hub/ideas/[id]`; UI `/hub/ideas` (filter platform/status, form tambah auto-deteksi platform) dan `/hub/ideas/[id]` (ubah/hapus), tab **"Rencana"** di `/hub/[slug]`, nav hub "Ide".
 
+### Changed
+
+- Notifikasi hub kini juga muncul saat fase **mulai dikerjakan** (`→ in_progress`, tipe `phase_started`), bukan hanya saat **selesai** (`→ done`, tipe `phase_completed`). Deteksi transisi diekstrak ke `diffPhaseTransitions` (memetakan `from`/`to`), dan `runIngest` mengembalikan `started` + `completed`. Parser/laporan proyek (`hub-report.mjs`) diperbarui agar menjalankan `hub:report` di dua momen (🔄 mulai, ✅ selesai). ADR-0012 menggantikan ADR-0009; `docs/hub/project-convention.md` diperbarui.
+
 ### Fixed
 
 - Parser `STATUS.md` kini menerima **id fase huruf** (mis. `A`, `B`) selain numerik (`1.1`, `2`), sehingga proyek seperti SigmaLab yang memakai tahap A–H ikut terbaca; pengurutan fase campuran juga diperbaiki.

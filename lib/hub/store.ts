@@ -4,7 +4,7 @@ import type { Pool } from "pg";
 
 import { getPool } from "@/lib/db";
 
-import { comparePhaseIds } from "./parse";
+import { comparePhaseIds, diffPhaseTransitions } from "./parse";
 import type {
   DecisionAction,
   IdeaCreateInput,
@@ -107,6 +107,8 @@ export type PhaseTransition = {
   project: string;
   phaseId: string;
   title: string;
+  from: PhaseStatus;
+  to: PhaseStatus;
 };
 
 export type HubNotification = {
@@ -240,22 +242,11 @@ export async function applyPhases(
 ): Promise<PhaseTransition[]> {
   return withSchema(async (client) => {
     const existing = await readPhases(client, project);
-    const previous = new Map(
-      existing.map((phase) => [phase.phaseId, phase.status]),
+    const transitions = diffPhaseTransitions(existing, phases).map(
+      (transition) => ({ project, ...transition }),
     );
-    const transitions: PhaseTransition[] = [];
 
     for (const phase of phases) {
-      const before = previous.get(phase.id);
-
-      if (before && before !== "done" && phase.status === "done") {
-        transitions.push({
-          project,
-          phaseId: phase.id,
-          title: phase.title,
-        });
-      }
-
       await client.query(
         `INSERT INTO hub_phase (project, phase_id, title, status, updated_at)
          VALUES ($1, $2, $3, $4, now())

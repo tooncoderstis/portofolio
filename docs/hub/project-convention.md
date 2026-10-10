@@ -5,11 +5,12 @@ Hub portofolio menampilkan progres fase semua proyek yang melapor. Proyek **mend
 ## Cara kerja
 
 1. Proyek menyimpan `STATUS.md` (format di bawah) dan `PRD.md`.
-2. Setelah menyelesaikan satu fase, jalankan `node scripts/hub-report.mjs`.
-3. Script mengirim isi `STATUS.md` + `PRD.md` ke `POST /api/hub/ingest`.
-4. Hub mem-parse daftar fase, menyimpan status, dan saat sebuah fase berubah menjadi **selesai** → kirim notifikasi (inbox + Web Push).
+2. **Mulai/melanjutkan fase** — tandai baris fase menjadi 🔄 (dikerjakan) di `STATUS.md`, lalu jalankan `node scripts/hub-report.mjs`.
+3. **Fase selesai** — tandai baris fase menjadi ✅ (selesai), lalu jalankan `node scripts/hub-report.mjs`.
+4. Script mengirim isi `STATUS.md` + `PRD.md` ke `POST /api/hub/ingest`.
+5. Hub mem-parse daftar fase, menyimpan status, dan saat sebuah fase **berubah** menjadi 🔄 atau ✅ → kirim notifikasi (inbox + Web Push) ke aplikasi portofolio.
 
-> Laporan pertama hanya menyinkronkan status (tidak memicu notifikasi). Notifikasi hanya muncul saat status fase **berubah** menjadi selesai.
+> Laporan pertama hanya menyinkronkan status (tidak memicu notifikasi). Notifikasi hanya muncul saat status fase **berubah** menjadi 🔄 (mulai dikerjakan) atau ✅ (selesai); perubahan lain (mis. reopen/pause) tidak memicu notifikasi.
 
 ## Variabel `.env` (di proyek, jangan commit)
 
@@ -58,3 +59,4 @@ Baris dengan id yang bukan numerik/huruf (mis. `—`) diabaikan. Format tabel be
 - Satu proyek = satu `STATUS.md` di root.
 - Jaga id fase tetap stabil; jangan mengganti id fase yang sudah pernah dilaporkan.
 - Fase yang belum dilaporkan tidak akan tercatat di hub.
+- Tandai 🔄 tepat saat mulai mengerjakan fase dan ✅ saat selesai, lalu jalankan `hub:report` di tiap perubahan; keduanya memicu notifikasi ke aplikasi portofolio.
