@@ -84,7 +84,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
             </Button>
           ) : null}
         </div>
-        {hub ? (
+        {hub && hub.total > 0 ? (
           <div className="space-y-2 pt-2">
             <div className="text-muted-foreground flex items-center justify-between text-xs">
               <span>

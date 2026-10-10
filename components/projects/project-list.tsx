@@ -81,7 +81,7 @@ export function ProjectList({
                     </Badge>
                   ))}
                 </div>
-                {item ? (
+                {item && item.total > 0 ? (
                   <div className="space-y-1.5">
                     <div className="text-muted-foreground flex items-center justify-between text-xs">
                       <span>
