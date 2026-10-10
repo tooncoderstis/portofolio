@@ -7,6 +7,10 @@ import { getPool } from "@/lib/db";
 import { comparePhaseIds } from "./parse";
 import type {
   DecisionAction,
+  IdeaCreateInput,
+  IdeaPlatform,
+  IdeaStatus,
+  IdeaUpdateInput,
   IngestPhase,
   PhaseStatus,
   PushSubscriptionInput,
@@ -59,7 +63,23 @@ CREATE TABLE IF NOT EXISTS hub_decision (
   phase_id text,
   note text,
   created_at timestamptz NOT NULL DEFAULT now()
-)`;
+);
+CREATE TABLE IF NOT EXISTS hub_idea (
+  id bigserial PRIMARY KEY,
+  project text,
+  title text NOT NULL,
+  summary text,
+  notes_md text,
+  platform text NOT NULL DEFAULT 'other',
+  source_url text,
+  tags text[] NOT NULL DEFAULT '{}',
+  status text NOT NULL DEFAULT 'inbox',
+  priority int NOT NULL DEFAULT 2,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS hub_idea_project_idx ON hub_idea (project);
+CREATE INDEX IF NOT EXISTS hub_idea_status_idx ON hub_idea (status)`;
 
 export type HubPhase = {
   phaseId: string;
@@ -107,6 +127,29 @@ export type HubDecision = {
   phaseId: string | null;
   note: string | null;
   createdAt: string;
+};
+
+export type HubIdea = {
+  id: number;
+  project: string | null;
+  title: string;
+  summary: string | null;
+  notesMd: string | null;
+  platform: IdeaPlatform;
+  sourceUrl: string | null;
+  tags: string[];
+  status: IdeaStatus;
+  priority: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type IdeaFilters = {
+  project?: string;
+  platform?: IdeaPlatform;
+  status?: IdeaStatus;
+  tag?: string;
+  limit?: number;
 };
 
 export type PushSubscription = {
@@ -451,4 +494,156 @@ export async function listPushSubscriptions(): Promise<PushSubscription[]> {
 
     return rows.map((row) => ({ endpoint: row.endpoint, keys: row.keys }));
   }, []);
+}
+
+type IdeaRow = {
+  id: string;
+  project: string | null;
+  title: string;
+  summary: string | null;
+  notes_md: string | null;
+  platform: IdeaPlatform;
+  source_url: string | null;
+  tags: string[] | null;
+  status: IdeaStatus;
+  priority: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
+const IDEA_COLUMNS = `id, project, title, summary, notes_md, platform, source_url, tags, status, priority, created_at, updated_at`;
+
+function mapIdeaRow(row: IdeaRow): HubIdea {
+  return {
+    id: Number(row.id),
+    project: row.project,
+    title: row.title,
+    summary: row.summary,
+    notesMd: row.notes_md,
+    platform: row.platform,
+    sourceUrl: row.source_url,
+    tags: row.tags ?? [],
+    status: row.status,
+    priority: row.priority,
+    createdAt: row.created_at.toISOString(),
+    updatedAt: row.updated_at.toISOString(),
+  };
+}
+
+async function readIdea(client: Client, id: number): Promise<HubIdea | null> {
+  const { rows } = await client.query<IdeaRow>(
+    `SELECT ${IDEA_COLUMNS} FROM hub_idea WHERE id = $1`,
+    [id],
+  );
+
+  return rows[0] ? mapIdeaRow(rows[0]) : null;
+}
+
+export async function listIdeas(filters: IdeaFilters = {}): Promise<HubIdea[]> {
+  return withSchema(async (client) => {
+    const { rows } = await client.query<IdeaRow>(
+      `SELECT ${IDEA_COLUMNS}
+         FROM hub_idea
+        WHERE ($1::text IS NULL OR project = $1)
+          AND ($2::text IS NULL OR platform = $2)
+          AND ($3::text IS NULL OR status = $3)
+          AND ($4::text IS NULL OR $4 = ANY(tags))
+        ORDER BY
+          CASE priority WHEN 1 THEN 0 WHEN 2 THEN 1 ELSE 2 END ASC,
+          updated_at DESC
+        LIMIT $5`,
+      [
+        filters.project ?? null,
+        filters.platform ?? null,
+        filters.status ?? null,
+        filters.tag ?? null,
+        filters.limit ?? 200,
+      ],
+    );
+
+    return rows.map(mapIdeaRow);
+  }, []);
+}
+
+export async function getIdea(id: number): Promise<HubIdea | null> {
+  return withSchema(async (client) => readIdea(client, id), null);
+}
+
+export async function createIdea(
+  input: IdeaCreateInput & { platform: IdeaPlatform },
+): Promise<HubIdea | null> {
+  return withSchema(async (client) => {
+    const { rows } = await client.query<IdeaRow>(
+      `INSERT INTO hub_idea
+         (project, title, summary, notes_md, platform, source_url, tags, status, priority)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING ${IDEA_COLUMNS}`,
+      [
+        input.project ?? null,
+        input.title,
+        input.summary ?? null,
+        input.notesMarkdown ?? null,
+        input.platform,
+        input.sourceUrl ?? null,
+        input.tags ?? [],
+        input.status ?? "inbox",
+        input.priority ?? 2,
+      ],
+    );
+
+    return rows[0] ? mapIdeaRow(rows[0]) : null;
+  }, null);
+}
+
+export async function updateIdea(
+  id: number,
+  patch: IdeaUpdateInput,
+): Promise<HubIdea | null> {
+  return withSchema(async (client) => {
+    const sets: string[] = [];
+    const values: unknown[] = [];
+
+    const set = (column: string, value: unknown) => {
+      values.push(value);
+      sets.push(`${column} = $${values.length}`);
+    };
+
+    if (patch.title !== undefined) set("title", patch.title);
+    if (patch.summary !== undefined) set("summary", patch.summary || null);
+    if (patch.notesMarkdown !== undefined) {
+      set("notes_md", patch.notesMarkdown || null);
+    }
+    if (patch.platform !== undefined) set("platform", patch.platform);
+    if (patch.sourceUrl !== undefined) {
+      set("source_url", patch.sourceUrl || null);
+    }
+    if (patch.tags !== undefined) set("tags", patch.tags);
+    if (patch.status !== undefined) set("status", patch.status);
+    if (patch.priority !== undefined) set("priority", patch.priority);
+    if (patch.project !== undefined) set("project", patch.project || null);
+
+    if (sets.length === 0) return readIdea(client, id);
+
+    values.push(id);
+
+    const { rows } = await client.query<IdeaRow>(
+      `UPDATE hub_idea
+          SET ${sets.join(", ")}, updated_at = now()
+        WHERE id = $${values.length}
+        RETURNING ${IDEA_COLUMNS}`,
+      values,
+    );
+
+    return rows[0] ? mapIdeaRow(rows[0]) : null;
+  }, null);
+}
+
+export async function deleteIdea(id: number): Promise<boolean> {
+  return withSchema(async (client) => {
+    const result = await client.query(`DELETE FROM hub_idea WHERE id = $1`, [
+      id,
+    ]);
+
+    return (result.rowCount ?? 0) > 0;
+  }, false);
 }

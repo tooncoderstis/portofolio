@@ -38,6 +38,8 @@ Status terkini: [`STATUS.md`](STATUS.md).
   - Integrasi skill `aasaprojectkit`: template `hub-report.mjs` + langkah pelaporan fase; `docs/hub/project-convention.md`.
   - ADR-0007 (auth owner), ADR-0008 (hub push), ADR-0009 (notifikasi Web Push).
 - Deploy produksi ke EasyPanel: project `m`/service `portofolio` (source Docker Image `ghcr.io/tooncoderstis/portofolio:latest`), Postgres `m/db`, Redis `m/redis`, domain HTTPS `https://m-portofolio.hgteop.easypanel.host`. Diverifikasi `/api/health` 200, halaman publik 200, `/hub` redirect ke `/login`, `/api/hub/*` 401.
+- FASE 4 — PWA: `app/manifest.ts` (`display: standalone`, ikon 192/512 + maskable), favicon `app/icon.svg` + `app/apple-icon.png`, skrip `npm run icons` (`scripts/generate-icons.ts` dengan `sharp`), `public/sw.js` diperluas (precache `/offline` + aset, navigasi network-first → `/offline`, aset statis cache-first, versi cache + cleanup, handler push dipertahankan), halaman `/offline`, komponen `ServiceWorkerRegister` (produksi) & `InstallPrompt` (`beforeinstallprompt`), serta `viewport.themeColor` + `appleWebApp` di layout.
+- FASE 4 — Ide & rencana pengembangan: tabel `hub_idea` (ide umum dari media + rencana per proyek via kolom `project` opsional) dengan `status`/`priority`/`tags`; deteksi platform dari hostname (`lib/ideas/platform.ts`); skema Zod (`lib/hub/schema.ts`), store `listIdeas/getIdea/createIdea/updateIdea/deleteIdea` (`lib/hub/store.ts`); API owner-only `GET/POST /api/hub/ideas` + `GET/PATCH/DELETE /api/hub/ideas/[id]`; UI `/hub/ideas` (filter platform/status, form tambah auto-deteksi platform) dan `/hub/ideas/[id]` (ubah/hapus), tab **"Rencana"** di `/hub/[slug]`, nav hub "Ide".
 
 ### Fixed
 

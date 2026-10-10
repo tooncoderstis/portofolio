@@ -56,3 +56,45 @@ export const pushSubscriptionSchema = z.object({
   }),
 });
 export type PushSubscriptionInput = z.infer<typeof pushSubscriptionSchema>;
+
+export const ideaPlatformSchema = z.enum([
+  "threads",
+  "x",
+  "tiktok",
+  "instagram",
+  "youtube",
+  "website",
+  "other",
+]);
+export type IdeaPlatform = z.infer<typeof ideaPlatformSchema>;
+
+export const ideaStatusSchema = z.enum([
+  "inbox",
+  "exploring",
+  "planned",
+  "done",
+  "archived",
+]);
+export type IdeaStatus = z.infer<typeof ideaStatusSchema>;
+
+const ideaProjectSchema = z
+  .string()
+  .min(1)
+  .max(80)
+  .regex(/^[a-z0-9-]+$/);
+
+export const ideaCreateSchema = z.object({
+  title: z.string().min(1).max(200),
+  summary: z.string().max(2000).optional(),
+  notesMarkdown: z.string().max(100_000).optional(),
+  platform: ideaPlatformSchema.optional(),
+  sourceUrl: z.url().max(2000).optional(),
+  tags: z.array(z.string().min(1).max(40)).max(20).optional(),
+  status: ideaStatusSchema.optional(),
+  priority: z.number().int().min(1).max(3).optional(),
+  project: ideaProjectSchema.optional(),
+});
+export type IdeaCreateInput = z.infer<typeof ideaCreateSchema>;
+
+export const ideaUpdateSchema = ideaCreateSchema.partial();
+export type IdeaUpdateInput = z.infer<typeof ideaUpdateSchema>;

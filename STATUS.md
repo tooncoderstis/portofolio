@@ -4,13 +4,13 @@
 > Riwayat rilis: [`CHANGELOG.md`](CHANGELOG.md) · Keputusan: [`docs/adr/`](docs/adr/) · Kebutuhan: [`PRD.md`](PRD.md).
 > **Jangan simpan kredensial di file ini.**
 
-- **Terakhir diperbarui**: 2026-10-09
+- **Terakhir diperbarui**: 2026-10-10
 - **Versi produksi aktif**: terpasang di EasyPanel — https://m-portofolio.hgteop.easypanel.host (project `m`, service `portofolio`; db `m/db`, cache `m/redis`; source Docker Image `ghcr.io/tooncoderstis/portofolio:latest`)
 - **Platform**: Next.js (App Router) + TypeScript + Tailwind + shadcn/ui · Postgres + Redis · EasyPanel (Docker image)
 
 ## TL;DR (konteks 30 detik)
 
-Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **FASE 1: 1.1–1.6 selesai. Dashboard live, halaman `/about` & `/projects`, dan grafik tren dari snapshot harian semua jalan. Sisa FASE 1: adapter Umami (butuh kredensial). FASE 3: Project Hub owner-only sudah terimplementasi (login, progres proyek, keputusan fase, notifikasi Web Push).**
+Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType) plus halaman tentang saya dan proyek. Stack Next.js App Router + TS + Tailwind, data eksternal via API route server-side + ISR/Redis, tren dari snapshot harian Postgres. Deploy di EasyPanel sebagai Docker image. **FASE 1: 1.1–1.6 selesai. Dashboard live, halaman `/about` & `/projects`, dan grafik tren dari snapshot harian semua jalan. Sisa FASE 1: adapter Umami (butuh kredensial). FASE 3: Project Hub owner-only sudah terimplementasi (login, progres proyek, keputusan fase, notifikasi Web Push). FASE 4: PWA (manifest + service worker + fallback offline) dan halaman Ide + tab Rencana pengembangan di hub sudah terimplementasi.**
 
 > ⚠️ **Catatan keamanan**: `.env` sementara memakai token GitHub/WakaTime lama yang pernah terekspos di disk. **Rotasi token** sebelum push/deploy.
 >
@@ -51,17 +51,27 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | 3.6 | Integrasi skill `aasaprojectkit` + CLI lapor + konvensi        | ✅     |
 | 3.7 | ADR, PRD, STATUS, CHANGELOG, runbook                           | ✅     |
 
+## FASE 4 — PWA, Ide & Rencana Pengembangan
+
+| Sub | Judul                                                            | Status |
+| --- | ---------------------------------------------------------------- | ------ |
+| 4.1 | PWA (manifest, ikon, service worker cache, fallback offline)     | ✅     |
+| 4.2 | Inbox ide dari media (Threads/X/TikTok/IG) — deteksi platform    | ✅     |
+| 4.3 | Tab "Rencana" di detail proyek hub (ide pengembangan per proyek) | ✅     |
+
 ## Kondisi saat ini
 
 - **Konten**: `lib/content.ts` (gray-matter + Zod) memvalidasi `content/profile.mdx` dan `content/projects/*.mdx` (schema ketat; slug file ↔ frontmatter divalidasi). Render MDX via `next-mdx-remote/rsc` + komponen styling di `components/mdx/`.
 - **Halaman**: `/` (hero + dashboard, `force-dynamic`), `/about` (bio, kompetensi, pengalaman), `/projects` (filter status client-side), `/projects/[slug]` (SSG via `generateStaticParams`, 404 untuk slug tak dikenal). Navigasi di header.
 - **Snapshot & tren**: `lib/snapshot.ts` (`snapshotAll` → `refreshStats` paksa fetch + upsert), `POST/GET /api/snapshot` (dilindungi `SNAPSHOT_SECRET`; 401 tanpa secret di produksi), `lib/trends.ts` (+ `extractMetric`), `GET /api/trends/[source]?days=30`, dan widget `TrendWidget`/`TrendChart` di beranda.
-- Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **68 test** · `build` ✅. Live: snapshot 401 tanpa secret; dengan secret → github/wakatime/monkeytype `ok`, umami `skipped`; 3 baris `snapshot` di Postgres; `/api/trends/github` mengembalikan poin; beranda memuat seksi "Tren (30 hari)".
+- Verifikasi: `typecheck` ✅ · `lint` ✅ · `test` ✅ **122 test** · `build` ✅. Live: snapshot 401 tanpa secret; dengan secret → github/wakatime/monkeytype `ok`, umami `skipped`; 3 baris `snapshot` di Postgres; `/api/trends/github` mengembalikan poin; beranda memuat seksi "Tren (30 hari)".
 - **Home dinamis**: `export const dynamic = "force-dynamic"` agar data dashboard tidak ter-bake saat build; cache tetap dikelola Redis. `next.config.ts` memakai `outputFileTracingIncludes` agar `content/**` ikut ke image standalone.
 - Repo publik: **https://github.com/tooncoderstis/portofolio** (branch `main`), CI hijau (lint, typecheck, test, build, gitleaks).
 - CI juga **membangun & mempublikasikan image** ke `ghcr.io/tooncoderstis/portofolio` (workflow `docker-publish`, tag `latest`/`main`/`sha` + semver saat tag).
 - `.env` tidak ter-commit (di-ignore); gitleaks memindai seluruh history di CI.
 - **Project Hub (FASE 3)**: auth owner (`lib/hub/auth.ts` scrypt + cookie HMAC, `/login`, guard `app/hub/layout.tsx`); skema `hub_project`/`hub_phase`/`hub_decision`/`hub_notification`/`push_subscription` di `lib/hub/store.ts`; ingest `POST /api/hub/ingest` (secret `HUB_INGEST_SECRET`, parser `lib/hub/parse.ts`); UI `/hub`, `/hub/[slug]`, `/hub/notifications` (markdown via `react-markdown`+`remark-gfm`); keputusan fase `POST /api/hub/projects/[slug]/decision`; Web Push (`web-push` + VAPID, `public/sw.js`); skrip `hub:hash`/`hub:register`/`hub:vapid`/`hub:report`. Template pelaporan + langkah DoD ditambahkan ke skill `aasaprojectkit`; konvensi di `docs/hub/project-convention.md`, runbook `docs/runbooks/hub.md`.
+- **PWA (FASE 4.1)**: `app/manifest.ts` (`display: standalone`, ikon 192/512 + maskable), favicon `app/icon.svg` + `app/apple-icon.png`, skrip `npm run icons` (`scripts/generate-icons.ts`, `sharp` devDependency). `public/sw.js`: precache `/offline` + aset, navigasi network-first → `/offline`, aset statis cache-first (revalidasi latar), `/api/**` tidak di-cache, versi cache + cleanup, handler push dipertahankan. `ServiceWorkerRegister` (hanya produksi) + `InstallPrompt` di root layout; `viewport.themeColor` + `appleWebApp`.
+- **Ide & Rencana (FASE 4.2–4.3)**: tabel `hub_idea` (kolom `project` opsional: kosong = inbox media, terisi = rencana proyek) dengan `platform`/`status`/`priority`/`tags`; deteksi platform dari hostname (`lib/ideas/platform.ts`); skema Zod (`lib/hub/schema.ts`); store `listIdeas/getIdea/createIdea/updateIdea/deleteIdea`; API owner-only `/api/hub/ideas` (+ `[id]`); UI `/hub/ideas`, `/hub/ideas/[id]`, dan tab "Rencana" di `/hub/[slug]`; nav hub "Ide". Read-only untuk publik (owner-only).
 - Sesi 2026-09-27 diakhiri: dev infra dihentikan (`docker compose down`; volume tetap). Lanjutkan dengan `docker compose up -d` lalu `npm run dev`.
 
 ## Yang belum selesai / menunggu
@@ -78,6 +88,9 @@ Portofolio developer dengan dashboard live (GitHub, WakaTime, Umami, MonkeyType)
 | `npm audit` (postcss via Next 15) | Tunda; perbaikan butuh Next 16 (breaking) → pertimbangkan ADR baru                      |
 | Env hub di produksi               | Set `HUB_PASSWORD_HASH`/`HUB_SESSION_SECRET`/`HUB_INGEST_SECRET`/`VAPID_*` di EasyPanel |
 | Registrasi & lapor proyek         | Jalankan `npm run hub:register`, lalu `hub:report` di tiap proyek                       |
+| Evaluasi manual PWA (4.1)         | Cek `/manifest.webmanifest`, registrasi SW di produksi, halaman `/offline` saat offline |
+| Evaluasi manual Ide & Rencana     | Tambah ide di `/hub/ideas`, kaitkan ke proyek, cek tab "Rencana" di `/hub/[slug]`       |
+| Build & push image versi baru     | Agar PWA + Ide & Rencana aktif di EasyPanel (`build-push.ps1`)                          |
 
 ## Cara menjalankan & menguji
 
@@ -90,6 +103,7 @@ npm run hub:hash         # buat HUB_PASSWORD_HASH + HUB_SESSION_SECRET
 npm run hub:vapid        # buat kunci VAPID untuk Web Push
 npm run hub:register     # daftarkan folder E:\aasatech ke hub
 npm run hub:report       # lapor STATUS.md/PRD.md proyek ini ke hub
+npm run icons            # buat ulang ikon PWA (public/icons + app/apple-icon.png)
 npm run lint
 npm run typecheck
 npm test

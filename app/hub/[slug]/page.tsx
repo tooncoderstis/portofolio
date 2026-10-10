@@ -7,10 +7,12 @@ import { DecisionForm } from "@/components/hub/decision-form";
 import { MarkdownView } from "@/components/hub/markdown-view";
 import { PhaseList } from "@/components/hub/phase-list";
 import { ProgressBar } from "@/components/hub/progress-bar";
+import { IdeaCard } from "@/components/ideas/idea-card";
+import { IdeaForm } from "@/components/ideas/idea-form";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatRelativeTime } from "@/lib/format";
-import { getProject, listDecisions } from "@/lib/hub/store";
+import { getProject, listDecisions, listIdeas } from "@/lib/hub/store";
 
 type RouteProps = {
   params: Promise<{ slug: string }>;
@@ -19,6 +21,7 @@ type RouteProps = {
 
 const TABS = [
   { value: "ringkasan", label: "Ringkasan" },
+  { value: "rencana", label: "Rencana" },
   { value: "status", label: "STATUS.md" },
   { value: "prd", label: "PRD.md" },
   { value: "keputusan", label: "Keputusan" },
@@ -44,6 +47,7 @@ export default async function HubProjectPage({
 
   const active = TABS.some((item) => item.value === tab) ? tab : "ringkasan";
   const decisions = await listDecisions(slug);
+  const ideas = active === "rencana" ? await listIdeas({ project: slug }) : [];
 
   return (
     <div className="space-y-8">
@@ -100,6 +104,39 @@ export default async function HubProjectPage({
             <PhaseList phases={project.phases} />
           </CardContent>
         </Card>
+      ) : null}
+
+      {active === "rencana" ? (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Tambah ide pengembangan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <IdeaForm
+                defaultProject={slug}
+                lockProject
+                projects={[{ slug, name: project.name }]}
+              />
+            </CardContent>
+          </Card>
+
+          {ideas.length === 0 ? (
+            <p className="text-muted-foreground text-sm">
+              Belum ada ide pengembangan untuk proyek ini.
+            </p>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2">
+              {ideas.map((idea) => (
+                <IdeaCard
+                  key={idea.id}
+                  idea={idea}
+                  projectName={project.name}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       ) : null}
 
       {active === "status" ? (

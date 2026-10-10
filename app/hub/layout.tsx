@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 
 const hubNav = [
   { href: "/hub", label: "Proyek" },
+  { href: "/hub/ideas", label: "Ide" },
   { href: "/hub/notifications", label: "Notifikasi" },
 ];
 

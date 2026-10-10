@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { InstallPrompt } from "@/components/pwa/install-prompt";
+import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getProfile } from "@/lib/content";
@@ -15,6 +17,13 @@ const nav = [
   { href: "/hub", label: "Hub" },
 ];
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1220" },
+  ],
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const { frontmatter } = await getProfile();
 
@@ -24,6 +33,12 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s — ${frontmatter.name}`,
     },
     description: frontmatter.tagline,
+    applicationName: frontmatter.name,
+    appleWebApp: {
+      capable: true,
+      title: frontmatter.name,
+      statusBarStyle: "default",
+    },
   };
 }
 
@@ -71,6 +86,8 @@ export default async function RootLayout({
               Data live via GitHub · WakaTime · Umami · MonkeyType
             </footer>
           </div>
+          <InstallPrompt />
+          <ServiceWorkerRegister />
         </ThemeProvider>
       </body>
     </html>

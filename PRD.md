@@ -38,6 +38,7 @@ Pengunjung tidak perlu login. **FASE 3** menambahkan login owner (password + ses
 FASE 1 → Dashboard live + identitas + halaman proyek (MVP)
 FASE 2 → Halaman detail proyek lanjutan + SEO/perf polish + snapshot tren
 FASE 3 → Project Hub owner-only: login, progres semua proyek, keputusan fase, notifikasi
+FASE 4 → PWA (offline) + inbox ide media + rencana pengembangan per proyek
 BACKLOG → Leaderboard publik, blog, multi-bahasa, mode tamu interaktif
 ```
 
@@ -80,6 +81,17 @@ BACKLOG → Leaderboard publik, blog, multi-bahasa, mode tamu interaktif
 - Keputusan "lanjut/tidak" hanya dicatat (tanpa eksekusi kode).
 - Notifikasi fase selesai: inbox `/hub/notifications` + Web Push.
 - **Acceptance criteria**: ingest menolak tanpa secret (401) & payload tak valid (400); fase yang berubah menjadi selesai membuat satu notifikasi + push; halaman hub menolak akses bukan owner.
+
+### 4.8 PWA (FASE 4)
+
+- Situs dapat dipasang sebagai aplikasi (manifest + ikon 192/512 + maskable), dengan fallback halaman `/offline` saat navigasi tanpa jaringan; aset statis di-cache, request `/api/**` tidak di-cache.
+- **Acceptance criteria**: `/manifest.webmanifest` valid & `display: standalone`; service worker terdaftar (produksi); `/offline` tampil saat offline; navigasi normal tetap memuat data segar.
+
+### 4.9 Inbox Ide & Rencana Pengembangan (FASE 4, owner-only)
+
+- `/hub/ideas`: menampung ide baru dari media (Threads/X/TikTok/IG/YouTube/lainnya) — platform dideteksi dari tautan; filter per platform/status/tag; CRUD.
+- Tab **"Rencana"** di `/hub/[slug]`: ide pengembangan per proyek (kolom `project` terisi).
+- **Acceptance criteria**: API owner-only menolak non-owner (401) & body tak valid (400); satu tabel `hub_idea` dengan `project` opsional melayani inbox umum dan rencana proyek.
 
 ## 5. Model Data (ERD)
 
@@ -134,6 +146,20 @@ erDiagram
         text note
         timestamptz created_at
     }
+    HUB_IDEA {
+        bigserial id PK
+        text project "opsional"
+        text title
+        text summary
+        text notes_md
+        text platform
+        text source_url
+        text[] tags
+        text status
+        int priority
+        timestamptz created_at
+        timestamptz updated_at
+    }
     PUSH_SUBSCRIPTION {
         bigserial id PK
         text endpoint
@@ -142,6 +168,7 @@ erDiagram
     SNAPSHOT }o--|| PROJECT : "tidak berelasi (independen)"
     HUB_PROJECT ||--o{ HUB_PHASE : "memiliki"
     HUB_PROJECT ||--o{ HUB_DECISION : "memiliki"
+    HUB_PROJECT |o--o{ HUB_IDEA : "rencana (opsional)"
 ```
 
 Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`; unik `(project, phase_id)` pada `HUB_PHASE`; unik `endpoint` pada `PUSH_SUBSCRIPTION`.
@@ -206,3 +233,5 @@ Constraint penting: unik `(source, captured_on)` pada `SNAPSHOT`; unik `(project
 | 9   | Autentikasi owner?            | Password + session cookie HMAC (ADR-0007)                         |
 | 10  | Sumber progres proyek?        | Push dari proyek ke Postgres via API ingest (ADR-0008)            |
 | 11  | Notifikasi fase selesai?      | Web Push + inbox (ADR-0009)                                       |
+| 12  | Dukungan PWA?                 | Manifest + service worker dengan fallback offline (ADR-0010)      |
+| 13  | Penyimpanan ide & rencana?    | Tabel `hub_idea` (kolom `project` opsional) (ADR-0011)            |
